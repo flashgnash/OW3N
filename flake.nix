@@ -37,7 +37,8 @@
               ''
                 dotnet publish -c Release
                 export $(grep -v '^#' .env | xargs)
-                dotnet bin/Release/net9.0/publish/Ordis.dll
+                cd bin/Release/net9.0/publish/
+                dotnet Ordis.dll
               ''))
 
             (pkgs.writeShellScriptBin "run" (
