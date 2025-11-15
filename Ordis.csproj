@@ -6,6 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>151de71c-4b1f-4cc9-a67b-f4718bdcef49</UserSecretsId>
 
+  <AssemblyName>Ordis</AssemblyName>
+  <RootNamespace>Ordis</RootNamespace>
 
 <RazorCompileOnBuild>true</RazorCompileOnBuild>
 <RazorCompileOnPublish>true</RazorCompileOnPublish>
