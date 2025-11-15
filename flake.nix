@@ -32,22 +32,31 @@
             (pkgs.writeShellScriptBin "compileSass" (''sass sass/app.scss wwwroot/app.css''))
             (pkgs.writeShellScriptBin "watchSass" (''sass --watch sass/app.scss:wwwroot/app.css ''))
 
-            (pkgs.writeShellScriptBin "run" ( #bash
-            ''
-              export $(grep -v '^#' .env | xargs)
+            (pkgs.writeShellScriptBin "publishAndRun" (
+              # bash
+              ''
+                dotnet publish -c Release
+                export $(grep -v '^#' .env | xargs)
+                dotnet bin/Release/net9.0/publish/Ordis.dll
+              ''))
 
-              sass --watch sass/app.scss:wwwroot/app.css &
-              p1=$!
+            (pkgs.writeShellScriptBin "run" (
+              # bash
+              ''
+                export $(grep -v '^#' .env | xargs)
 
-              cleanup() {
-                  kid=$(pgrep -P "$p1")
-                  kill "$kid" "$p1" 2>/dev/null
-              }
-              trap cleanup EXIT
-              trap cleanup INT
+                sass --watch sass/app.scss:wwwroot/app.css &
+                p1=$!
 
-              dotnet watch run
-            ''))
+                cleanup() {
+                    kid=$(pgrep -P "$p1")
+                    kill "$kid" "$p1" 2>/dev/null
+                }
+                trap cleanup EXIT
+                trap cleanup INT
+
+                dotnet watch run
+              ''))
 
             netcoredbg
             bruno
