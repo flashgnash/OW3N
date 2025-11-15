@@ -5,6 +5,13 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>151de71c-4b1f-4cc9-a67b-f4718bdcef49</UserSecretsId>
+
+
+<RazorCompileOnBuild>true</RazorCompileOnBuild>
+<RazorCompileOnPublish>true</RazorCompileOnPublish>
+<EnableDefaultScopedCssItems>true</EnableDefaultScopedCssItems>
+
+    
   </PropertyGroup>
 
   <ItemGroup>
