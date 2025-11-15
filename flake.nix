@@ -37,6 +37,7 @@
               ''
                 dotnet publish -c Release
                 export $(grep -v '^#' .env | xargs)
+                cp .env bin/Release/net9.0/publish/
                 cd bin/Release/net9.0/publish/
                 dotnet Ordis.dll
               ''))
