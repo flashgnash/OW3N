@@ -1,7 +1,7 @@
 ﻿@inject IConfiguration Configuration
 @inject NavigationManager Navigation
 @inject AuthenticationStateProvider AuthStateProvider
-
+@inject PlayerCharacterService CharService
 
 
 <div class="top-row navbar navbar-dark">
@@ -23,30 +23,23 @@
                 <!-- </NavLink> -->
             <!-- </div> -->
 
-
+@if(loggedIn) {
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="characters">
                     <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Characters
                 </NavLink>
+                @if(Characters != null){
+
+                    @foreach(var character in Characters ){
+                      <NavLink class="nav-link" style="margin-left:10px; width: 95%" href="@($"/characters/{character.Id}")">@character.Name</NavLink>
+                    }
+
+                }
+                
             </div>
+}
 
-
- 
-
-            <!-- <div class="nav-item px-3"> -->
-                <!-- <NavLink class="nav-link" href="rolls"> -->
-                    <!-- <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Rolls -->
-                <!-- </NavLink> -->
-            <!-- </div> -->
-
-            <!-- <div class="nav-item disabled px-3"> -->
-                <!-- <NavLink class="nav-link disabled" href="skills"> -->
-                    <!-- <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Skill tree -->
-                <!-- </NavLink> -->
-            <!-- </div> -->
-
-
-            @if(loggedIn) {
+else {
 
             <div class="nav-item px-3 p-3 mt-auto">
                 <NavLink class="nav-link" href="@discordLoginUrl">
@@ -56,8 +49,7 @@
                      Log in
                 </NavLink>
             </div>
-                
-            }
+}
         </nav>
 
 
@@ -69,6 +61,9 @@
 @code {
     string discordLoginUrl;
     bool loggedIn; 
+
+
+    IEnumerable<PlayerCharacter> Characters {get; set;}
 
     protected async override Task OnInitializedAsync()
     {
@@ -87,8 +82,15 @@
     var authState = await AuthStateProvider.GetAuthenticationStateAsync();
     var user = authState.User;
 
-    loggedIn = user.FindFirst("discord_id")?.Value == null;
+    loggedIn = user.FindFirst("discord_id")?.Value != null;
 
+    // get claim
+    var discordId = user.FindFirst("discord_id")?.Value;
+    var discordName = user.FindFirst("discord_name")?.Value;
+
+    if(discordId != null){
+      Characters = CharService?.GetByDiscordId(discordId).Reverse();
+    }
 
             
     }
