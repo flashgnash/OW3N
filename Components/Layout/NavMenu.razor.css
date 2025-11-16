@@ -99,6 +99,18 @@
   /* border-left: 3px solid blue; */
 }
 
+.nav-item ::deep .nav-link.child::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--accent);
+  opacity: 0.5;
+}
+
+
 
 .nav-item ::deep .nav-link:hover {
     background-color: rgba(255,255,255,0.1);
