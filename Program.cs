@@ -26,6 +26,8 @@ builder.Services.AddSingleton(new PlayerCharacterService(connStr));
 builder.Services.AddSingleton<RollService>();
 builder.Services.AddSingleton<DiscordService>();
 
+builder.Services.AddScoped<UserState>();
+
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 

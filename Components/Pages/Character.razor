@@ -3,6 +3,8 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager Navigation
 @attribute [Authorize(Policy = "HasDiscordId")]
+@inject UserState UserState
+
 @if (Char != null)
 {
     <dialog id="rollDialog" class=" bg-light rounded-4 shadow-lg border-0 disable-dbl-tap-zoom p-0">
@@ -165,6 +167,7 @@ else
         // (this is only safe because I'm using serverside blazor)
         if (character?.UserId == discordId)
         {
+            UserState.SelectedCharacter = character;
             Char = character;
         }
         else
