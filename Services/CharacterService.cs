@@ -1,23 +1,24 @@
-using Microsoft.Data.Sqlite;
+using Npgsql;
 
 public class PlayerCharacterService : IDbService<PlayerCharacter, int>
 {
-    private readonly string _connStr;
+    readonly string _connStr;
     public PlayerCharacterService(string connStr) => _connStr = connStr;
 
     public void Insert(PlayerCharacter c)
     {
-        using var conn = new SqliteConnection(_connStr);
+
+        using var conn = new NpgsqlConnection(_connStr);
         conn.Open();
-        using var cmd = new SqliteCommand(@"
+        using var cmd = new NpgsqlCommand(@"
             INSERT INTO characters (
                 user_id, name, stat_block_hash, stat_block, stat_block_message_id, stat_block_channel_id,
                 spell_block_channel_id, spell_block_message_id, spell_block, spell_block_hash, mana,
-                mana_readout_channel_id, mana_readout_message_id
+                mana_readout_channel_id, mana_readout_message_id, saved_rolls, roll_server_id
             ) VALUES (
                 @user_id, @name, @stat_block_hash, @stat_block, @stat_block_message_id, @stat_block_channel_id,
                 @spell_block_channel_id, @spell_block_message_id, @spell_block, @spell_block_hash, @mana,
-                @mana_readout_channel_id, @mana_readout_message_id
+                @mana_readout_channel_id, @mana_readout_message_id, @saved_rolls, @roll_server_id
             )", conn);
         AddParams(cmd, c);
         cmd.ExecuteNonQuery();
@@ -25,15 +26,16 @@ public class PlayerCharacterService : IDbService<PlayerCharacter, int>
 
     public void Update(PlayerCharacter c)
     {
-        using var conn = new SqliteConnection(_connStr);
+        using var conn = new NpgsqlConnection(_connStr);
         conn.Open();
-        using var cmd = new SqliteCommand(@"
+        using var cmd = new NpgsqlCommand(@"
             UPDATE characters SET
                 user_id=@user_id, name=@name, stat_block_hash=@stat_block_hash, stat_block=@stat_block,
                 stat_block_message_id=@stat_block_message_id, stat_block_channel_id=@stat_block_channel_id,
                 spell_block_channel_id=@spell_block_channel_id, spell_block_message_id=@spell_block_message_id,
                 spell_block=@spell_block, spell_block_hash=@spell_block_hash, mana=@mana,
-                mana_readout_channel_id=@mana_readout_channel_id, mana_readout_message_id=@mana_readout_message_id
+                mana_readout_channel_id=@mana_readout_channel_id, mana_readout_message_id=@mana_readout_message_id,
+                saved_rolls=@saved_rolls, roll_server_id=@roll_server_id
             WHERE id=@id", conn);
         AddParams(cmd, c);
         cmd.Parameters.AddWithValue("@id", c.Id);
@@ -42,43 +44,42 @@ public class PlayerCharacterService : IDbService<PlayerCharacter, int>
 
     public void Delete(int id)
     {
-        using var conn = new SqliteConnection(_connStr);
+        using var conn = new NpgsqlConnection(_connStr);
         conn.Open();
-        using var cmd = new SqliteCommand("DELETE FROM characters WHERE id=@id", conn);
+        using var cmd = new NpgsqlCommand("DELETE FROM characters WHERE id=@id", conn);
         cmd.Parameters.AddWithValue("@id", id);
         cmd.ExecuteNonQuery();
     }
 
     public PlayerCharacter? GetById(int id)
     {
-        using var conn = new SqliteConnection(_connStr);
+        using var conn = new NpgsqlConnection(_connStr);
         conn.Open();
-        using var cmd = new SqliteCommand("SELECT * FROM characters WHERE id=@id", conn);
+        using var cmd = new NpgsqlCommand("SELECT * FROM characters WHERE id=@id", conn);
         cmd.Parameters.AddWithValue("@id", id);
-        using var reader = cmd.ExecuteReader();
-        if (!reader.Read()) return null;
-        return ReadPlayerCharacter(reader);
+        using var r = cmd.ExecuteReader();
+        if (!r.Read()) return null;
+        return ReadPlayerCharacter(r);
     }
 
     public IEnumerable<PlayerCharacter> GetByDiscordId(string discordId)
     {
-        using var conn = new SqliteConnection(_connStr);
+        using var conn = new NpgsqlConnection(_connStr);
         conn.Open();
-        using var cmd = new SqliteCommand("SELECT * FROM characters WHERE user_id=@id", conn);
-        cmd.Parameters.AddWithValue("@id", discordId.ToString());
-        using var reader = cmd.ExecuteReader();
+        using var cmd = new NpgsqlCommand("SELECT * FROM characters WHERE user_id=@id", conn);
+        cmd.Parameters.AddWithValue("@id", discordId);
+        using var r = cmd.ExecuteReader();
 
-        var result = new List<PlayerCharacter>();
-        while (reader.Read())
-            result.Add(ReadPlayerCharacter(reader));
-        return result;
+        var list = new List<PlayerCharacter>();
+        while (r.Read()) list.Add(ReadPlayerCharacter(r));
+        return list;
     }
 
-    private void AddParams(SqliteCommand cmd, PlayerCharacter c)
+    void AddParams(NpgsqlCommand cmd, PlayerCharacter c)
     {
         cmd.Parameters.AddWithValue("@user_id", (object?)c.UserId ?? DBNull.Value);
         cmd.Parameters.AddWithValue("@name", (object?)c.Name ?? DBNull.Value);
-        cmd.Parameters.AddWithValue("@saved_rolls", (object?)c.Name ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("@saved_rolls", (object?)c.SavedRollsString ?? DBNull.Value);
         cmd.Parameters.AddWithValue("@stat_block_hash", (object?)c.StatBlockHash ?? DBNull.Value);
         cmd.Parameters.AddWithValue("@stat_block", (object?)c.StatBlock ?? DBNull.Value);
         cmd.Parameters.AddWithValue("@stat_block_message_id", (object?)c.StatBlockMessageId ?? DBNull.Value);
@@ -90,11 +91,12 @@ public class PlayerCharacterService : IDbService<PlayerCharacter, int>
         cmd.Parameters.AddWithValue("@mana", (object?)c.Mana ?? DBNull.Value);
         cmd.Parameters.AddWithValue("@mana_readout_channel_id", (object?)c.ManaReadoutChannelId ?? DBNull.Value);
         cmd.Parameters.AddWithValue("@mana_readout_message_id", (object?)c.ManaReadoutMessageId ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("@roll_server_id", (object?)c.RollServerId ?? DBNull.Value);
     }
 
-    private PlayerCharacter ReadPlayerCharacter(SqliteDataReader r) => new PlayerCharacter
+    PlayerCharacter ReadPlayerCharacter(NpgsqlDataReader r) => new PlayerCharacter
     {
-        Id = r["id"] as long? is long l ? (int)l : null,
+        Id = r.GetInt32(r.GetOrdinal("id")),
         UserId = r["user_id"] as string,
         Name = r["name"] as string,
         RollServerId = r["roll_server_id"] as string,
@@ -107,7 +109,7 @@ public class PlayerCharacterService : IDbService<PlayerCharacter, int>
         SpellBlockMessageId = r["spell_block_message_id"] as string,
         SpellBlock = r["spell_block"] as string,
         SpellBlockHash = r["spell_block_hash"] as string,
-        Mana = r["mana"] as long? is long ml ? (int)ml : null,
+        Mana = r["mana"] as int?,
         ManaReadoutChannelId = r["mana_readout_channel_id"] as string,
         ManaReadoutMessageId = r["mana_readout_message_id"] as string,
     };
