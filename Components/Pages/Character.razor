@@ -67,13 +67,7 @@
                 {
                     @if (!(gauge?.Max == 0 && gauge?.Value == 0))
                     {
-
-                            <Orb
-                                Name="@gauge.Name"
-                                Colour="@gauge.Colour"
-                                Value="@gauge.Value"
-                                Max="@gauge.Max" />
-
+                        <Orb OrbGauge="@gauge"  />
                     }
                             
                 }
@@ -96,32 +90,6 @@
                         </div>
                     </div>
                 }
-                <!-- @if(Char?.Hunger != null) { -->
-                <!-- <div class="card flex-fill">
-                -->
-                <!-- <div class="card-header">
-                Exhaustion:
-                <
-                /div> -->
-                <!-- <div class="card-body fs-7">
-                -->
-                <!-- <span>
-                3 / 3
-                <
-                /span> -->
-                <!-- <br/>
-                -->
-                <!-- <span class="d-none d-md-inline">
-                -->
-                <!-- <CharBar  Repeat="@(3)" Icon="😵‍💫" />
-                -->
-                <!-- </span>
-                -->
-                <!-- </div>
-                -->
-                <!-- </div>
-                -->
-                <!-- } -->
             </div>
         </div>
 
@@ -153,6 +121,11 @@ else
     PlayerCharacter? Char;
 
     [Parameter] public int CharacterId { get; set; }
+
+    public void GaugeChangedCallback(Gauge gauge) {
+        Console.WriteLine("Hello world");
+    }
+
 
     protected async override Task OnInitializedAsync()
     {

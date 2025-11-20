@@ -1,28 +1,93 @@
+@rendermode InteractiveServer
+@inject ILogger<Orb> Log
 
 
-<div class="orb m-auto" style="max-width: 40%">
+@if(AllowDialog) {
+<dialog id="orbDialog">
 
-  <div class="orb-label">@Name @Value/@Max</div>
+            <div class="d-flex justify-content-between align-items-center bg-dark">
+                <span class="fs-3 m-3">
+                    <i class="bi bi-dice-5"></i>
+                    Edit @OrbGauge.Name
+                </span>
+                <button class="btn btn-danger h-100" style="overflow: scroll" onclick="orbDialog.close()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                      <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+                    </svg>                
+                </button>
+            </div>
+            <div class=p-3>
+              <Orb OrbGauge="@OrbGauge" AllowDialog="false" />
+              <input type="range" class="w-100" @bind="@OrbGauge.Value" max="@OrbGauge.Max" style=" "/>
+              <input type="number" class="w-100 form-control" @bind="@OrbGauge.Value">
+
+                <h2 class="w-100 text-center">Modify</h2>
+
+              
+              <div class="d-flex w-100 flex-row flex-nowrap">
+                <!-- <button class="btn btn-secondary" @onclick="Decrement">-</button> -->
+                <input type="number" class="w-100 form-control" @bind="@IncrementValue">
 
 
-  <div class="orb-liquid" style="height:@Percentage%; --orb-colour:@Colour">
+                <button class="btn btn-primary w-100" @onclick="Increment">
+                @if(IncrementValue > 0){
+                  <span>Add</span>
+                }
+                else{
+                  <span>Subtract</span>
+                }
+                  </button>
+              </div>
+            </div>
+</dialog>
+}
+
+<div onclick="orbDialog.showModal()" class="orb m-auto" style="max-width: 40%">
+
+  <div class="orb-label d-flex flex-wrap">
+  <div class="d-flex flex-row w-100">
+    @OrbGauge.Name
+  </div >
+
+  <div class="d-flex flex-row m-100 m-auto">
+     <!-- <input style="width: 50px;" value="@OrbGauge.Value"/> -->
+      <span class="m-auto">@OrbGauge.Value</span>
+    
+      <span class="m-auto">/</span>
+
+      <span class="m-auto">@OrbGauge.Max</span>
+  </div>
+  </div>
+
+
+  <div class="orb-liquid" style="height:@Percentage%; --orb-colour:@OrbGauge.Colour">
   </div>
 </div>
 
 
 
 @code {
-  [Parameter]
-  public string? Name { get; set; }
 
   [Parameter]
-  public string Colour { get; set; }
+  public bool AllowDialog {get; set;} = true;
+
+
+  private int IncrementValue {get; set;}
+
+  void Increment() {
+      OrbGauge.Value += IncrementValue;
+  }
+  void Decrement() {
+      OrbGauge.Value -= IncrementValue;
+  }
 
   [Parameter]
-  public int Value { get; set; }
+  public Gauge OrbGauge { get; set; }
 
-  private float Percentage => ((float)Value / (float)Max)*100;
 
   [Parameter]
-  public int Max { get; set; }
+  public EventCallback<Gauge>? ChangedCallback { get; set; }
+
+  private float Percentage => ((float)OrbGauge.Value / (float)OrbGauge.Max)*100;
+
 }
