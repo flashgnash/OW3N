@@ -18,7 +18,7 @@
           inherit system;
         };
 
-        dotnetPkg = pkgs.dotnetCorePackages.sdk_9_0;
+        dotnetPkg = pkgs.dotnetCorePackages.sdk_10_0;
       in
       {
         devShell = pkgs.mkShell {

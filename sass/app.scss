@@ -45,6 +45,11 @@ $card-cap-color: $text-colour;
   
 }
 
+.card .button {
+  color: red !important;
+}
+
+
 html, body {
   overscroll-behavior: none;
   position: fixed;
