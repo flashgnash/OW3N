@@ -87,6 +87,15 @@ html, body {
 
     width: 80%;
     height: 80%;
+
+    padding: 0;
+    border: 0;
+
+    background-color: rgba(var(--bs-light-rgb), var(--bs-bg-opacity));    
+    box-shadow: var(--bs-box-shadow-lg);
+    
+    border-radius: var(--bs-border-radius-xl);
+    
   }
   @media (max-width: 768px) {
     dialog {

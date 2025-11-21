@@ -3,46 +3,40 @@
 
 
 @if(AllowDialog) {
-<dialog id="orbDialog">
+    <Modal Title="@("Edit" + OrbGauge.Name)" id="@OrbGauge.Name">
+        <div class=p-3>
+          <div class="d-flex flex-row flex-wrap gap-3">
+            <Orb OrbGauge="@OrbGauge" AllowDialog="false" />
+            <div class="m-auto flex-grow-1">
 
-            <div class="d-flex justify-content-between align-items-center bg-dark">
-                <span class="fs-3 m-3">
-                    <i class="bi bi-dice-5"></i>
-                    Edit @OrbGauge.Name
-                </span>
-                <button class="btn btn-danger h-100" style="overflow: scroll" onclick="orbDialog.close()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-                      <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
-                    </svg>                
-                </button>
-            </div>
-            <div class=p-3>
-              <Orb OrbGauge="@OrbGauge" AllowDialog="false" />
-              <input type="range" class="w-100" @bind="@OrbGauge.Value" max="@OrbGauge.Max" style=" "/>
+              <h2 class="w-100 text-center">Set</h2>
               <input type="number" class="w-100 form-control" @bind="@OrbGauge.Value">
+              <input type="range" class="w-100" @bind="@OrbGauge.Value" max="@OrbGauge.Max" style=" "/>
 
-                <h2 class="w-100 text-center">Modify</h2>
 
-              
-              <div class="d-flex w-100 flex-row flex-nowrap">
-                <!-- <button class="btn btn-secondary" @onclick="Decrement">-</button> -->
-                <input type="number" class="w-100 form-control" @bind="@IncrementValue">
+              <h2 class="w-100 text-center">Modify</h2>
 
+              <input type="number" class="w-100 form-control" @bind="@IncrementValue"/>
+
+              <div class="d-flex w-100 flex-row flex-nowrap gap-1">
+
+
+                <button class="btn btn-primary w-100" @onclick="Decrement">
+                  <span>-@Math.Abs(IncrementValue)</span>
+                </button>
 
                 <button class="btn btn-primary w-100" @onclick="Increment">
-                @if(IncrementValue > 0){
-                  <span>Add</span>
-                }
-                else{
-                  <span>Subtract</span>
-                }
-                  </button>
+                  <span>+@Math.Abs(IncrementValue)</span>
+                </button>
               </div>
             </div>
-</dialog>
+          </div>
+        </div>
+    </Modal>
+
 }
 
-<div onclick="orbDialog.showModal()" class="orb m-auto" style="max-width: 40%">
+<div onclick="@(OrbGauge.Name).showModal()" class="orb m-auto" style="max-width: 40%">
 
   <div class="orb-label d-flex flex-wrap">
   <div class="d-flex flex-row w-100">
