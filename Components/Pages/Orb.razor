@@ -9,12 +9,25 @@
             <Orb OrbGauge="@OrbGauge" AllowDialog="false" />
             <div class="m-auto flex-grow-1">
 
-              <h2 class="w-100 text-center">Set</h2>
+              <h3 class="w-100 text-center">Set</h3>
+
+              <div class="d-flex w-100 flex-row flex-nowrap gap-1">
+                  <button @onclick="() => {OrbGauge.Value = 0;}" class="btn btn-primary w-100">
+                 Zero
+                  </button>
+
               <input type="number" class="w-100 form-control" @bind="@OrbGauge.Value">
+                  <button @onclick="() => {OrbGauge.Value = OrbGauge.Max;}" class="btn btn-primary w-100">
+                  Max
+                  </button>
+              </div>
+
               <input type="range" class="w-100" @bind="@OrbGauge.Value" max="@OrbGauge.Max" style=" "/>
+              <br>
 
+              <h3 class="w-100 text-center">Modify</h3>
 
-              <h2 class="w-100 text-center">Modify</h2>
+              <input type="range" class="w-100" @bind="@IncrementValue" max="@OrbGauge.Max" style=" "/>
 
               <input type="number" class="w-100 form-control" @bind="@IncrementValue"/>
 
@@ -29,10 +42,57 @@
                   <span>+@Math.Abs(IncrementValue)</span>
                 </button>
               </div>
+
+
+              
             </div>
+
           </div>
+            <br>
+            <h3 class="text-center">History</h3>
+            <ul class="list-unstyled" style="overflow: scroll">
+
+          @foreach (var (change, timestamp) in ChangeHistory.AsEnumerable().Reverse()) {
+              <li class="card p-2 text-white d-flex flex-nowrap flex-row gap-2">
+
+  
+                  
+                <h4 class="m-auto">
+                  @(change > 0 ? "+" : "-")
+                </h4>
+
+                <h4 class="m-auto">
+
+                    <span>@Math.Abs(change)</span>
+                </h4>
+
+                <div class="flex-grow-1">
+                </div>
+                <h6 class="m-auto">@Ago(timestamp)</h6>
+
+                <div class="flex-grow-1">
+                </div>
+
+                <button class="btn btn-primary">
+
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-counterclockwise" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z"/>
+                    <path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466"/>
+                  </svg>
+                </button>
+                <button class="btn btn-primary">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-recycle" viewBox="0 0 16 16">
+                    <path d="M9.302 1.256a1.5 1.5 0 0 0-2.604 0l-1.704 2.98a.5.5 0 0 0 .869.497l1.703-2.981a.5.5 0 0 1 .868 0l2.54 4.444-1.256-.337a.5.5 0 1 0-.26.966l2.415.647a.5.5 0 0 0 .613-.353l.647-2.415a.5.5 0 1 0-.966-.259l-.333 1.242zM2.973 7.773l-1.255.337a.5.5 0 1 1-.26-.966l2.416-.647a.5.5 0 0 1 .612.353l.647 2.415a.5.5 0 0 1-.966.259l-.333-1.242-2.545 4.454a.5.5 0 0 0 .434.748H5a.5.5 0 0 1 0 1H1.723A1.5 1.5 0 0 1 .421 12.24zm10.89 1.463a.5.5 0 1 0-.868.496l1.716 3.004a.5.5 0 0 1-.434.748h-5.57l.647-.646a.5.5 0 1 0-.708-.707l-1.5 1.5a.5.5 0 0 0 0 .707l1.5 1.5a.5.5 0 1 0 .708-.707l-.647-.647h5.57a1.5 1.5 0 0 0 1.302-2.244z"/>
+                  </svg>
+                </button>
+              </li>
+            }
+            </ul>
         </div>
     </Modal>
+
+
+
 
 }
 
@@ -66,21 +126,36 @@
   public bool AllowDialog {get; set;} = true;
 
 
+  public List<(int,DateTime)> ChangeHistory {get; set;} = new();
+
   private int IncrementValue {get; set;}
 
-  void Increment() {
-      OrbGauge.Value += IncrementValue;
+
+  string Ago(DateTime t) {
+      var span = DateTime.UtcNow - t.ToUniversalTime();
+      if (span.TotalSeconds < 60) return $"{(int)span.TotalSeconds}s";
+      if (span.TotalMinutes < 60) return $"{(int)span.TotalMinutes}m";
+      if (span.TotalHours < 24)   return $"{(int)span.TotalHours}h";
+      return $"{(int)span.TotalDays}d ago";
   }
-  void Decrement() {
-      OrbGauge.Value -= IncrementValue;
+
+    
+  void Modify(int value) {
+      if(value != 0){
+        OrbGauge.Value += value;
+        ChangeHistory.Add((value,DateTime.Now));       
+      }
+
   }
+  void Increment() => Modify(IncrementValue);
+  void Decrement() => Modify(-IncrementValue);       
 
   [Parameter]
   public Gauge OrbGauge { get; set; }
 
 
-  [Parameter]
-  public EventCallback<Gauge>? ChangedCallback { get; set; }
+  <!-- [Parameter] -->
+  <!-- public EventCallback<Gauge>? ChangedCallback { get; set; } -->
 
   private float Percentage => ((float)OrbGauge.Value / (float)OrbGauge.Max)*100;
 
