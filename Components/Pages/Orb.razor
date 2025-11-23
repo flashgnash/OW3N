@@ -1,6 +1,6 @@
 @rendermode InteractiveServer
 @inject ILogger<Orb> Log
-
+@using Microsoft.AspNetCore.Components
 
 @if(AllowDialog) {
     <Modal Title="@("Edit " + OrbGauge.Name)" id="@OrbGauge.Name">
@@ -155,18 +155,27 @@
   }
 
     
-  void Modify(int value) {
-      if(value != 0){
-        OrbGauge.Value += value;
-        ChangeHistory.Add((value,DateTime.Now));       
-      }
+  async Task Modify(int value) {
+      if(value == 0)
+        return;
+
+      OrbGauge.Value += value;
+      ChangeHistory.Add((value,DateTime.Now));
+             
+      if (ChangedCallback.HasDelegate)
+          ChangedCallback.InvokeAsync(OrbGauge);
+
+      
   }
 
-  void Set(int value) {
+  async Task Set(int value) {
     var change = value - OrbGauge.Value;
     ChangeHistory.Add((change,DateTime.Now));       
     OrbGauge.Value = value;
 
+    
+    if (ChangedCallback.HasDelegate)
+        ChangedCallback.InvokeAsync(OrbGauge);
   }
 
   
@@ -177,8 +186,9 @@
   public Gauge OrbGauge { get; set; }
 
 
-  <!-- [Parameter] -->
-  <!-- public EventCallback<Gauge>? ChangedCallback { get; set; } -->
+  [Parameter]
+  public EventCallback<Gauge> ChangedCallback { get; set; }
+
   private float Percentage => ((float)OrbGauge.Value / (float)OrbGauge.Max)*100;
 
 }
