@@ -22,7 +22,8 @@
                   </button>
               </div>
 
-              <input type="range" class="w-100" @bind="@OrbGauge.Value" max="@OrbGauge.Max" style=" "/>
+              <Slider @bind-Value="@OrbGauge.Value" Min="0" Max="@OrbGauge.Max" class="w-100" />
+              <!-- <input type="range" class="w-100" @bind="@OrbGauge.Value" max="@OrbGauge.Max" style=" "/> -->
               <br>
 
               <h3 class="w-100 text-center">Modify</h3>
