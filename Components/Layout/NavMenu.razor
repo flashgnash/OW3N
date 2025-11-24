@@ -79,18 +79,18 @@ else {
             $"https://discord.com/api/oauth2/authorize?client_id={clientId}&redirect_uri={Uri.EscapeDataString(redirect)}&response_type=code&scope=identify&state={state}";
 
 
-    var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-    var user = authState.User;
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
 
-    loggedIn = user.FindFirst("discord_id")?.Value != null;
+        loggedIn = user.FindFirst("discord_id")?.Value != null;
 
-    // get claim
-    var discordId = user.FindFirst("discord_id")?.Value;
-    var discordName = user.FindFirst("discord_name")?.Value;
+        // get claim
+        var discordId = user.FindFirst("discord_id")?.Value;
+        var discordName = user.FindFirst("discord_name")?.Value;
 
-    if(discordId != null){
-      Characters = CharService?.GetByDiscordId(discordId).Reverse();
-    }
+        if(discordId != null){
+          Characters = (await CharService?.GetByDiscordIdAsync(discordId)).Reverse();
+        }
 
             
     }

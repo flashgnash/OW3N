@@ -70,7 +70,7 @@
     DiscordName = user.FindFirst("discord_name")?.Value;
 
     if(DiscordId != null){
-      Characters = CharService.GetByDiscordId(DiscordId).Reverse();
+      Characters = (await CharService.GetByDiscordIdAsync(DiscordId)).Reverse();
     }
   }
 }

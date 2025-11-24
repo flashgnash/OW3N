@@ -4,6 +4,7 @@ using Ordis.Components;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using DotNetEnv;
+using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -18,13 +19,24 @@ builder.Services.Configure<Dictionary<string,APIConfig>>(
 
 Env.Load();
 
-var connStr = builder.Configuration.GetConnectionString("CharacterDb");
 
 builder.Services.AddHttpClient();
 
-builder.Services.AddSingleton(new PlayerCharacterService(connStr));
 builder.Services.AddSingleton<RollService>();
 builder.Services.AddSingleton<DiscordService>();
+
+
+
+// builder.Services.AddDbContext<OrdisContext>(opts =>
+//     opts.UseNpgsql(builder.Configuration.GetConnectionString("CharacterDb")));
+//
+
+builder.Services.AddDbContextFactory<OrdisContext>(opts =>
+    opts.UseNpgsql(builder.Configuration.GetConnectionString("CharacterDb")));
+
+
+builder.Services.AddScoped<PlayerCharacterService>();
+
 
 builder.Services.AddScoped<UserState>();
 

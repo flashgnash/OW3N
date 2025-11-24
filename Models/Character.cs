@@ -1,15 +1,19 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
 
-public class PlayerCharacter
+
+
+public partial class PlayerCharacter
 {
 
-    public int? Id { get; set; }
+    public int Id { get; set; }
     public string? UserId { get; set; }
     public string? Name { get; set; }
 
 
     public string? RollServerId {get; set;}
 
+    [NotMapped]
     public IEnumerable<Item> Inventory {get; set; } = new List<Item>() {
         // new Item() {
         //     Icon = "🍔",
@@ -24,6 +28,7 @@ public class PlayerCharacter
     };
 
 
+    [NotMapped]
     public IEnumerable<Spell> Spells {get; set; } = new List<Spell>() {
         // new Spell() {
         //     Icon = "🧊",
@@ -40,10 +45,13 @@ public class PlayerCharacter
     };
 
 
+    [NotMapped]
     public int? Level => TryGetInt("level");
 
+    [NotMapped]
     public string? Race { get; set; }
 
+    [NotMapped]
     public List<Stat>? Stats
     {
         get
@@ -64,6 +72,7 @@ public class PlayerCharacter
     }
 
     
+    [NotMapped]
     public List<Stat>? SpecialStats
     {
         get
@@ -83,8 +92,10 @@ public class PlayerCharacter
         }
     }
 
+    [NotMapped]
     public IEnumerable<Status>? Statuses { get; set; }
 
+    [NotMapped]
     public List<Gauge> Gauges
     {
         get
@@ -120,13 +131,14 @@ public class PlayerCharacter
     public string? ManaReadoutMessageId { get; set; }
 
 
-    public string SavedRollsString {get; set;}
+    public string? SavedRolls {get; set;}
 
-    public Dictionary<string, string>? SavedRolls
+    [NotMapped]
+    public Dictionary<string, string>? SavedRollsDict
     {
         get
         {
-            var saved_rolls = SavedRollsString; //this is kind of atrocious but I am limited by discord's UI (and my own laziness)
+            var saved_rolls = SavedRolls; //this is kind of atrocious but I am limited by discord's UI (and my own laziness)
 
             return saved_rolls
                 ?.Split('\n', StringSplitOptions.RemoveEmptyEntries)
@@ -179,6 +191,8 @@ public class PlayerCharacter
     public int? HealthRegen => TryGetInt("hpr");
     public int? EnergyPool => TryGetInt("energy_pool");
 
+
+    public string? StatBlockServerId { get; set; }
 
     
 }

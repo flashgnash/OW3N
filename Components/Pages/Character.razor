@@ -112,14 +112,14 @@ else
     [Parameter] public int CharacterId { get; set; }
 
     public async Task GaugeChangedCallback(Gauge gauge) {
-        CharService.Update(Char);
+        await CharService.UpdateAsync(Char);
         Console.WriteLine("Hello world");
     }
 
 
     protected async override Task OnInitializedAsync()
     {
-        var character = CharService.GetById(CharacterId);
+        var character = await CharService.GetByIdAsync(CharacterId);
 
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;

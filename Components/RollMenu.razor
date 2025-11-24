@@ -43,11 +43,11 @@
   }
 </div>
 
-  @if(Character.SavedRolls != null) {
+  @if(Character.SavedRollsDict != null) {
     <div id="savedRolls" class="m-auto flex-grow-1">
       <h3 class="text-center">Custom Rolls</h3>
     <div class="d-flex">
-      @foreach (var kv in Character.SavedRolls)
+      @foreach (var kv in Character.SavedRollsDict)
       {
           <button class="btn btn-secondary flex-fill @btnClasses[kv.Key] m-1" @onclick="() => SetRollText(kv.Value)">@kv.Key </button>
       }
@@ -191,8 +191,8 @@
                 btnClasses[stat.Name] = "btn-secondary";
 
             }
-            if(Character?.SavedRolls != null) {
-              foreach (var savedRoll in Character?.SavedRolls)
+            if(Character?.SavedRollsDict != null) {
+              foreach (var savedRoll in Character?.SavedRollsDict)
                 btnClasses[savedRoll.Key] = "btn-secondary";
             }
         }
