@@ -56,7 +56,7 @@ public partial class PlayerCharacter
     {
         get
         {
-            if (StatJson?.RootElement.TryGetProperty("stats", out var stats) == true && stats.ValueKind == JsonValueKind.Object)
+            if (StatBlock?.RootElement.TryGetProperty("stats", out var stats) == true && stats.ValueKind == JsonValueKind.Object)
             {
                 var list = new List<Stat>();
                 foreach (var prop in stats.EnumerateObject())
@@ -77,7 +77,7 @@ public partial class PlayerCharacter
     {
         get
         {
-            if (StatJson?.RootElement.TryGetProperty("special_stats", out var stats) == true && stats.ValueKind == JsonValueKind.Object)
+            if (StatBlock?.RootElement.TryGetProperty("special_stats", out var stats) == true && stats.ValueKind == JsonValueKind.Object)
             {
                 var list = new List<Stat>();
                 foreach (var prop in stats.EnumerateObject())
@@ -118,10 +118,11 @@ public partial class PlayerCharacter
         }
     }
 
-    public string? StatBlockHash { get; set; }
-    public string? StatBlock { get; set; }
-    public string? StatBlockMessageId { get; set; }
-    public string? StatBlockChannelId { get; set; }
+    // public string? StatBlockHash { get; set; }
+    [Column("stat_block")]
+    public JsonDocument? StatBlock { get; set; }
+    // public string? StatBlockMessageId { get; set; }
+    // public string? StatBlockChannelId { get; set; }
     public string? SpellBlockChannelId { get; set; }
     public string? SpellBlockMessageId { get; set; }
     public string? SpellBlock { get; set; }
@@ -147,31 +148,34 @@ public partial class PlayerCharacter
         }
     }
 
-    JsonDocument? _statJson;
+    // [Column("stats")]
+    // JsonDocument? _statJson;
 
-    private JsonDocument? StatJson
-    {
-        get
-        {
-            if (_statJson == null && !string.IsNullOrEmpty(StatBlock))
-            {
-                try { _statJson = JsonDocument.Parse(StatBlock); }
-                catch { _statJson = null; }
-            }
-            return _statJson;
-        }
-    }
+    // private JsonDocument? StatJson
+    // {
+    //     get
+    //     {
+    //         if (_statJson == null && !string.IsNullOrEmpty(StatBlock))
+    //         {
+    //             try { _statJson = JsonDocument.Parse(StatBlock); }
+    //             catch { _statJson = null; }
+    //         }
+    //         return _statJson;
+    //     }
+    // }
 
     int? TryGetInt(string prop)
     {
-        if (StatJson?.RootElement.TryGetProperty(prop, out var p) == true && p.ValueKind == JsonValueKind.Number && p.TryGetInt32(out var v))
+
+        Console.WriteLine($"\n\n\n{StatBlock.RootElement.GetRawText()} : finding {prop}");
+        if (StatBlock?.RootElement.TryGetProperty(prop, out var p) == true && p.ValueKind == JsonValueKind.Number && p.TryGetInt32(out var v))
             return v;
         return null;
     }
 
     string? TryGetString(string prop)
     {
-        if (StatJson?.RootElement.TryGetProperty(prop, out var p) == true && p.ValueKind == JsonValueKind.String)
+        if (StatBlock?.RootElement.TryGetProperty(prop, out var p) == true && p.ValueKind == JsonValueKind.String)
             return p.GetString();
         return null;
     }
@@ -192,7 +196,7 @@ public partial class PlayerCharacter
     public int? EnergyPool => TryGetInt("energy_pool");
 
 
-    public string? StatBlockServerId { get; set; }
+    // public string? StatBlockServerId { get; set; }
 
     
 }
