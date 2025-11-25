@@ -17,6 +17,9 @@ builder.Services.Configure<RpgConfig>(
 builder.Services.Configure<Dictionary<string,APIConfig>>(
     builder.Configuration.GetSection("ApiConfig"));
 
+builder.Services.AddSingleton<CharacterInterceptor>();
+
+
 Env.Load();
 
 
@@ -31,8 +34,10 @@ builder.Services.AddSingleton<DiscordService>();
 //     opts.UseNpgsql(builder.Configuration.GetConnectionString("CharacterDb")));
 //
 
-builder.Services.AddDbContextFactory<OrdisContext>(opts =>
-    opts.UseNpgsql(builder.Configuration.GetConnectionString("CharacterDb")));
+builder.Services.AddDbContextFactory<OrdisContext>((sp, opts) => {
+    opts.UseNpgsql(builder.Configuration.GetConnectionString("CharacterDb"));
+    opts.AddInterceptors(sp.GetRequiredService<CharacterInterceptor>());
+});
 
 
 builder.Services.AddScoped<PlayerCharacterService>();
