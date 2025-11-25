@@ -1,15 +1,19 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
 
-public class PlayerCharacter
+
+
+public partial class PlayerCharacter
 {
 
-    public int? Id { get; set; }
+    public int Id { get; set; }
     public string? UserId { get; set; }
     public string? Name { get; set; }
 
 
     public string? RollServerId {get; set;}
 
+    [NotMapped]
     public IEnumerable<Item> Inventory {get; set; } = new List<Item>() {
         // new Item() {
         //     Icon = "🍔",
@@ -24,6 +28,7 @@ public class PlayerCharacter
     };
 
 
+    [NotMapped]
     public IEnumerable<Spell> Spells {get; set; } = new List<Spell>() {
         // new Spell() {
         //     Icon = "🧊",
@@ -40,15 +45,18 @@ public class PlayerCharacter
     };
 
 
+    [NotMapped]
     public int? Level => TryGetInt("level");
 
+    [NotMapped]
     public string? Race { get; set; }
 
+    [NotMapped]
     public List<Stat>? Stats
     {
         get
         {
-            if (StatJson?.RootElement.TryGetProperty("stats", out var stats) == true && stats.ValueKind == JsonValueKind.Object)
+            if (StatBlock?.RootElement.TryGetProperty("stats", out var stats) == true && stats.ValueKind == JsonValueKind.Object)
             {
                 var list = new List<Stat>();
                 foreach (var prop in stats.EnumerateObject())
@@ -64,11 +72,12 @@ public class PlayerCharacter
     }
 
     
+    [NotMapped]
     public List<Stat>? SpecialStats
     {
         get
         {
-            if (StatJson?.RootElement.TryGetProperty("special_stats", out var stats) == true && stats.ValueKind == JsonValueKind.Object)
+            if (StatBlock?.RootElement.TryGetProperty("special_stats", out var stats) == true && stats.ValueKind == JsonValueKind.Object)
             {
                 var list = new List<Stat>();
                 foreach (var prop in stats.EnumerateObject())
@@ -83,8 +92,10 @@ public class PlayerCharacter
         }
     }
 
+    [NotMapped]
     public IEnumerable<Status>? Statuses { get; set; }
 
+    [NotMapped]
     public List<Gauge> Gauges
     {
         get
@@ -100,17 +111,18 @@ public class PlayerCharacter
             if (CurrentSoul.HasValue && MaxSoul.HasValue)
                 gauges.Add(new Gauge { Name = "Soul", Value = CurrentSoul.Value, Max = MaxSoul.Value });
 
-            if (CurrentArmour.HasValue && MaxArmour.HasValue)
-                gauges.Add(new Gauge { Name = "Armour", Value = CurrentArmour.Value, Max = MaxArmour.Value });
+            // if (CurrentArmour.HasValue && MaxArmour.HasValue)
+            //     gauges.Add(new Gauge { Name = "Armour", Value = CurrentArmour.Value, Max = MaxArmour.Value });
 
             return gauges;
         }
     }
 
-    public string? StatBlockHash { get; set; }
-    public string? StatBlock { get; set; }
-    public string? StatBlockMessageId { get; set; }
-    public string? StatBlockChannelId { get; set; }
+    // public string? StatBlockHash { get; set; }
+    [Column("stat_block")]
+    public JsonDocument? StatBlock { get; set; }
+    // public string? StatBlockMessageId { get; set; }
+    // public string? StatBlockChannelId { get; set; }
     public string? SpellBlockChannelId { get; set; }
     public string? SpellBlockMessageId { get; set; }
     public string? SpellBlock { get; set; }
@@ -120,13 +132,14 @@ public class PlayerCharacter
     public string? ManaReadoutMessageId { get; set; }
 
 
-    public string SavedRollsString {get; set;}
+    public string? SavedRolls {get; set;}
 
-    public Dictionary<string, string>? SavedRolls
+    [NotMapped]
+    public Dictionary<string, string>? SavedRollsDict
     {
         get
         {
-            var saved_rolls = SavedRollsString; //this is kind of atrocious but I am limited by discord's UI (and my own laziness)
+            var saved_rolls = SavedRolls; //this is kind of atrocious but I am limited by discord's UI (and my own laziness)
 
             return saved_rolls
                 ?.Split('\n', StringSplitOptions.RemoveEmptyEntries)
@@ -135,31 +148,34 @@ public class PlayerCharacter
         }
     }
 
-    JsonDocument? _statJson;
+    // [Column("stats")]
+    // JsonDocument? _statJson;
 
-    private JsonDocument? StatJson
-    {
-        get
-        {
-            if (_statJson == null && !string.IsNullOrEmpty(StatBlock))
-            {
-                try { _statJson = JsonDocument.Parse(StatBlock); }
-                catch { _statJson = null; }
-            }
-            return _statJson;
-        }
-    }
+    // private JsonDocument? StatJson
+    // {
+    //     get
+    //     {
+    //         if (_statJson == null && !string.IsNullOrEmpty(StatBlock))
+    //         {
+    //             try { _statJson = JsonDocument.Parse(StatBlock); }
+    //             catch { _statJson = null; }
+    //         }
+    //         return _statJson;
+    //     }
+    // }
 
     int? TryGetInt(string prop)
     {
-        if (StatJson?.RootElement.TryGetProperty(prop, out var p) == true && p.ValueKind == JsonValueKind.Number && p.TryGetInt32(out var v))
+
+        Console.WriteLine($"\n\n\n{StatBlock.RootElement.GetRawText()} : finding {prop}");
+        if (StatBlock?.RootElement.TryGetProperty(prop, out var p) == true && p.ValueKind == JsonValueKind.Number && p.TryGetInt32(out var v))
             return v;
         return null;
     }
 
     string? TryGetString(string prop)
     {
-        if (StatJson?.RootElement.TryGetProperty(prop, out var p) == true && p.ValueKind == JsonValueKind.String)
+        if (StatBlock?.RootElement.TryGetProperty(prop, out var p) == true && p.ValueKind == JsonValueKind.String)
             return p.GetString();
         return null;
     }
@@ -179,6 +195,8 @@ public class PlayerCharacter
     public int? HealthRegen => TryGetInt("hpr");
     public int? EnergyPool => TryGetInt("energy_pool");
 
+
+    // public string? StatBlockServerId { get; set; }
 
     
 }

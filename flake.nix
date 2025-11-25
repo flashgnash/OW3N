@@ -29,11 +29,43 @@
             openssl
             dotnetPkg
 
-            (pkgs.writeShellScriptBin "run" (''export $(grep -v '^#' .env | xargs) && dotnet watch run''))
+            (pkgs.writeShellScriptBin "compileSass" (''sass sass/app.scss wwwroot/app.css''))
+            (pkgs.writeShellScriptBin "watchSass" (''sass --watch sass/app.scss:wwwroot/app.css ''))
+
+            (pkgs.writeShellScriptBin "publishAndRun" (
+              # bash
+              ''
+                dotnet publish -c Release
+                export $(grep -v '^#' .env | xargs)
+                cp .env bin/Release/net9.0/publish/
+                cd bin/Release/net9.0/publish/
+                dotnet Ordis.dll
+              ''))
+
+            (pkgs.writeShellScriptBin "run" (
+              # bash
+              ''
+                export $(grep -v '^#' .env | xargs)
+
+                sass --watch sass/app.scss:wwwroot/app.css &
+                p1=$!
+
+                cleanup() {
+                    kid=$(pgrep -P "$p1")
+                    kill "$kid" "$p1" 2>/dev/null
+                }
+                trap cleanup EXIT
+                trap cleanup INT
+
+                dotnet watch run
+              ''))
 
             netcoredbg
             bruno
             omnisharp-roslyn
+            dart-sass
+
+            nodejs # Begrudgingly I need npm
 
             sqlite
           ];

@@ -1,0 +1,48 @@
+<input 
+    type="range" 
+    id="@SliderId" 
+    min="@Min" 
+    max="@Max" 
+    @attributes="AdditionalAttributes" />
+
+@code {
+    [Parameter] public string SliderId { get; set; } = $"slider_{Guid.NewGuid()}";
+    [Parameter] public int Min { get; set; } = 0;
+    [Parameter] public int Max { get; set; } = 100;
+
+    [Parameter] public int Value { get; set; }
+    [Parameter] public EventCallback<int> ValueChanged { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    [Inject] private IJSRuntime JS { get; set; } = default!;
+
+    private DotNetObjectReference<Slider>? dotNetRef;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        dotNetRef = DotNetObjectReference.Create(this);
+
+        await JS.InvokeVoidAsync("setupSlider", new
+        {
+            sliderId = SliderId,
+            throttleMs = 50,
+            dotNetRef = dotNetRef,
+            methodName = nameof(UpdateValueFromJs)
+        });
+    }
+
+    [JSInvokable]
+    public async Task UpdateValueFromJs(int val)
+    {
+        if (val != Value)
+        {
+            Value = val;
+            await ValueChanged.InvokeAsync(val);
+            StateHasChanged();
+        }
+    }
+}
