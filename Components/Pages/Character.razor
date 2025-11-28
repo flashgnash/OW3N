@@ -7,59 +7,69 @@
 @rendermode InteractiveServer
 
 
-@if (Char != null)
-{
-    <Modal Title="Roll" id="rollDialog">
-        <div class=p-3>
-            <RollMenu Character="@Char" />
-        </div>
-    </Modal>
-            
-    <div class="disable-dbl-tap-zoom container mt-4 vh-100" style="overflow: scroll">
-        <div class="w-100 p-2 d-flex">
-            <div class="d-flex flex-row w-100">
-                <div class="flex-grow-1">
-                    <span class="fs-2">
-                        @Char.Name
-                    </span>
-                    <div>
-                        Level @Char.Level
-                    </div>
-                </div>
+      <RollMenu Character="@Char"/>
 
-                <a onClick="rollDialog.showModal()" class="float-right btn btn-primary p-2 rounded-3 d-flex justify-content-center">
-                    <svg
-                        width="50"
-                        height="45"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="currentColor"
-                        class="bi bi-dice-5-fill m-auto"
-                        viewBox="0 0 16 16">
-                        <path d="M3 0a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V3a3 3 0 0 0-3-3zm2.5 4a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m8 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0M12 13.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3M5.5 12a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0M8 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3" />
-                    </svg>
-                </a>
-            </div>
-        </div>
-        
-        <div class="d-flex flex-wrap gap-1" style="text-size: 10px">
-            @if (Char?.Stats != null)
-            {
-                <StatBlock Stats="@Char.Stats" />
-            }
-        </div>
-        <!-- Stats -->
-        @if (Char?.Gauges != null)
-        {
-            <!-- Globes -->
-            <div class="d-flex gap-2">
-                @foreach (var gauge in Char.Gauges)
-                {
-                    @if (!(gauge?.Max == 0 && gauge?.Value == 0))
-                    {
-                        <Orb OrbGauge="@gauge" ChangedCallback="@GaugeChangedCallback"   />
-                    }
-                            
-                }
+    </div>
+  </dialog>
+
+  <div class="disable-dbl-tap-zoom container mt-4">
+    <div class="w-100 p-2">
+      <span class="fs-2">@Char.Name — Level @Char.Level </span>
+
+      <button
+        onClick="rollDialog.showModal()"
+        class="btn btn-primary float-right fs-2"
+      >
+        🎲
+      </button>
+    </div>
+    <br />
+
+    <!-- Stats -->
+    <div class="d-flex flex-wrap" style="text-size: 10px">
+
+    <div class="d-flex flex-wrap" style="text-size: 10px">
+      @if(Char?.Stats != null){
+      <StatBlock Stats="@Char.Stats" FlexFill="true" />
+      }
+    </div>
+    <Radar/>
+    </div>
+
+    @if(Char?.Gauges != null){
+    <!-- Globes -->
+    <div class="d-flex">
+      @foreach (var gauge in Char.Gauges) {
+        @if(!(gauge?.Max == 0 && gauge?.Value == 0)) {
+        <Orb
+          Name="@gauge.Name"
+          Colour="@gauge.Colour"
+          Value="@gauge.Value"
+          Max="@gauge.Max"
+        />
+        }
+      }
+    </div>
+
+    }
+
+
+
+    <div class="">
+
+      <div class="flex-grow-2 flex-row flex-wrap">
+  
+        @if(Char?.Hunger != null && Char?.Hunger != 0) {
+          <div class="card flex-fill">
+            <div class="card-header">Hunger:</div>
+
+            <div class="card-body fs-7">
+
+              <span>@Char.Hunger / 10</span>
+              <br/>
+              <span class="d-none d-md-inline">
+                <CharBar  Repeat="@(Char.Hunger ?? 10)" Icon="🍖" />
+              </span>
             </div>
         }
         <div class="">
@@ -104,6 +114,16 @@ else
 {
     <h1>Either this character doesn't exist or you don't have access</h1>
 }
+
+
+
+
+@code {
+  PlayerCharacter? Char;
+  [Parameter] public int CharacterId { get; set; }
+
+  protected async override Task OnInitializedAsync() {
+    var character = CharService.GetById(CharacterId);
 
 @code
 {

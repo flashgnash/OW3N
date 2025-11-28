@@ -1,0 +1,47 @@
+<div class="m-1">
+  <canvas id="radar"></canvas>
+</div>
+<script>
+
+  new Chart(document.getElementById("radar"), {
+    type: "radar",
+    "label": "Stat",
+
+    options: {
+      plugins: { legend: { display: false } },
+
+      scales: {
+        r: {
+          min: 1,
+        }
+      },
+    },
+
+
+    data: {
+
+    labels: [
+      @foreach (var s in Stats)
+      {
+        @:"@s.Name",
+      }
+    ],
+    datasets: [{
+
+   data: [
+      @foreach (var s in Stats)
+      {
+        @:"@s.Value",
+      }
+    ],
+
+
+    }]
+    }
+  });
+</script>
+
+@code {
+  [Parameter]
+  public List<Stat>? Stats {get; set;}
+}
