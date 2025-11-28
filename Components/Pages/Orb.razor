@@ -1,37 +1,194 @@
-<div class="card border-0 flex-fill m-2">
-  @if(Name != null) {
-    <div class="card-header text-center">@Name</div>
-  }
+@rendermode InteractiveServer
+@inject ILogger<Orb> Log
+@using Microsoft.AspNetCore.Components
 
-  <div class="card-body">
-    <div class="orb m-bottom-10">
-      <progress
-        class="orb-@(Colour)"
-        value="@Value"
-        max="@Max"
-      ></progress>
-    </div>
+@if(AllowDialog) {
+    <Modal Title="@("Edit " + OrbGauge.Name)" id="@OrbGauge.Name">
+        <div class=p-3>
+          <div class="d-flex flex-row flex-wrap gap-3">
+            <Orb OrbGauge="@OrbGauge" AllowDialog="false" />
+            <div class="m-auto flex-grow-1">
 
-    <div class="flex-row m-auto">
-      <div class="m-auto">@Value</div>
-      <div class="m-auto">|</div>
+              <h3 class="w-100 text-center">Set</h3>
 
-      <div class="m-auto">@Max</div>
-    </div>
+              <div class="d-flex w-100 flex-row flex-nowrap gap-1">
+                  <button @onclick="() => Set(0)" class="btn btn-primary w-100">
+                 Zero
+                  </button>
+
+              <input type="number" class="w-100 form-control" @bind="@OrbGauge.Value">
+                  <button @onclick="() => Set(OrbGauge.Max)" class="btn btn-primary w-100">
+                  Max
+                  </button>
+              </div>
+
+              <Slider @bind-Value="@OrbGauge.Value" Min="0" Max="@OrbGauge.Max" class="w-100" />
+              <!-- <input type="range" class="w-100" @bind="@OrbGauge.Value" max="@OrbGauge.Max" style=" "/> -->
+              <br>
+              <br>
+              <h3 class="w-100 text-center">Damage/Heal</h3>
+
+              <!-- <input type="range" class="w-100" @bind="@IncrementValue" max="@OrbGauge.Max" style=" "/> -->
+
+
+
+
+
+              
+
+              <div class="d-flex flex-row flex-nowrap">
+                <input type="number" class="form-control flex-shrink-1" @bind="@IncrementValue" />
+
+                <button class="btn @(IncrementValue > 0 ? "btn-success" : "btn-danger") w-100" @onclick="Increment">
+
+                   <span>
+                @if(IncrementValue > 0) {
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-capsule" viewBox="0 0 16 16">E  <path d="M1.828 8.9 8.9 1.827a4 4 0 1 1 5.657 5.657l-7.07 7.071A4 4 0 1 1 1.827 8.9Zm9.128.771 2.893-2.893a3 3 0 1 0-4.243-4.242L6.713 5.429z"/>E</svg>
+
+                  
+                }
+                else {
+
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-through-heart-fill" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M2.854 15.854A.5.5 0 0 1 2 15.5V14H.5a.5.5 0 0 1-.354-.854l1.5-1.5A.5.5 0 0 1 2 11.5h1.793l3.103-3.104a.5.5 0 1 1 .708.708L4.5 12.207V14a.5.5 0 0 1-.146.354zM16 3.5a.5.5 0 0 1-.854.354L14 2.707l-1.006 1.006c.236.248.44.531.6.845.562 1.096.585 2.517-.213 4.092-.793 1.563-2.395 3.288-5.105 5.08L8 13.912l-.276-.182A24 24 0 0 1 5.8 12.323L8.31 9.81a1.5 1.5 0 0 0-2.122-2.122L3.657 10.22a9 9 0 0 1-1.039-1.57c-.798-1.576-.775-2.997-.213-4.093C3.426 2.565 6.18 1.809 8 3.233c1.25-.98 2.944-.928 4.212-.152L13.292 2 12.147.854A.5.5 0 0 1 12.5 0h3a.5.5 0 0 1 .5.5z"/>
+                    </svg>
+                  
+                }
+
+                    @Math.Abs(IncrementValue)
+                  </span>                 
+                </button>
+
+              </div>
+
+                <Slider @bind-Value="@IncrementValue" Min="@(-OrbGauge.Max)" Max="@OrbGauge.Max" class="flex-grow-1 w-100" />
+              
+            </div>
+
+          </div>
+            <br>
+            <h3 class="text-center">History</h3>
+            <ul class="list-unstyled" style="overflow: scroll">
+
+          @foreach (var (change, timestamp) in ChangeHistory.AsEnumerable().Reverse()) {
+              <li class="card p-2 text-white d-flex flex-nowrap flex-row gap-2">
+
+  
+                  
+
+                <h4 class="m-auto @(change > 0 ? "text-success" : "text-danger")">
+
+                    <span>@(change > 0 ? "+" : "-")@Math.Abs(change)</span>
+                </h4>
+
+                <div class="flex-grow-1">
+                </div>
+                <h6 class="m-auto">@Ago(timestamp)</h6>
+
+                <div class="flex-grow-1">
+                </div>
+
+                <button class="btn btn-primary" @onclick="() => Modify(-change)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-counterclockwise" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z"/>
+                    <path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466"/>
+                  </svg>
+                </button>
+
+                
+                <button class="btn btn-primary" @onclick="() => Modify(change)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-recycle" viewBox="0 0 16 16">
+                    <path d="M9.302 1.256a1.5 1.5 0 0 0-2.604 0l-1.704 2.98a.5.5 0 0 0 .869.497l1.703-2.981a.5.5 0 0 1 .868 0l2.54 4.444-1.256-.337a.5.5 0 1 0-.26.966l2.415.647a.5.5 0 0 0 .613-.353l.647-2.415a.5.5 0 1 0-.966-.259l-.333 1.242zM2.973 7.773l-1.255.337a.5.5 0 1 1-.26-.966l2.416-.647a.5.5 0 0 1 .612.353l.647 2.415a.5.5 0 0 1-.966.259l-.333-1.242-2.545 4.454a.5.5 0 0 0 .434.748H5a.5.5 0 0 1 0 1H1.723A1.5 1.5 0 0 1 .421 12.24zm10.89 1.463a.5.5 0 1 0-.868.496l1.716 3.004a.5.5 0 0 1-.434.748h-5.57l.647-.646a.5.5 0 1 0-.708-.707l-1.5 1.5a.5.5 0 0 0 0 .707l1.5 1.5a.5.5 0 1 0 .708-.707l-.647-.647h5.57a1.5 1.5 0 0 0 1.302-2.244z"/>
+                  </svg>
+                </button>
+              </li>
+            }
+            </ul>
+        </div>
+    </Modal>
+
+
+
+
+}
+<a href="javascript:void(0)" onclick="@(OrbGauge.Name).showModal()" class="orb m-auto" style="max-width: 40%">
+
+  <div class="orb-label d-flex flex-wrap">
+  <div class="d-flex flex-row w-100">
+    @OrbGauge.Name
+  </div >
+
+  <div class="d-flex flex-row m-100 m-auto">
+     <!-- <input style="width: 50px;" value="@OrbGauge.Value"/> -->
+      <span class="m-auto">@OrbGauge.Value</span>
+    
+      <span class="m-auto">/</span>
+
+      <span class="m-auto">@OrbGauge.Max</span>
   </div>
-</div>
+  </div>
+
+
+  <div class="orb-liquid" style="height:@Percentage%; --orb-colour:@OrbGauge.Colour">
+  </div>
+</a>
+
 
 
 @code {
-  [Parameter]
-  public string? Name { get; set; }
 
   [Parameter]
-  public string Colour { get; set; }
+  public bool AllowDialog {get; set;} = true;
+
+
+  public List<(int,DateTime)> ChangeHistory {get; set;} = new();
+
+  private int IncrementValue {get; set;}
+
+
+  string Ago(DateTime t) {
+      var span = DateTime.UtcNow - t.ToUniversalTime();
+      if (span.TotalSeconds < 60) return $"{(int)span.TotalSeconds}s";
+      if (span.TotalMinutes < 60) return $"{(int)span.TotalMinutes}m";
+      if (span.TotalHours < 24)   return $"{(int)span.TotalHours}h";
+      return $"{(int)span.TotalDays}d ago";
+  }
+
+    
+  async Task Modify(int value) {
+      if(value == 0)
+        return;
+
+      OrbGauge.Value += value;
+      ChangeHistory.Add((value,DateTime.Now));
+             
+      if (ChangedCallback.HasDelegate)
+          ChangedCallback.InvokeAsync(OrbGauge);
+
+      
+  }
+
+  async Task Set(int value) {
+    var change = value - OrbGauge.Value;
+    ChangeHistory.Add((change,DateTime.Now));       
+    OrbGauge.Value = value;
+
+    
+    if (ChangedCallback.HasDelegate)
+        ChangedCallback.InvokeAsync(OrbGauge);
+  }
+
+  
+  void Increment() => Modify(IncrementValue);
+  void Decrement() => Modify(-IncrementValue);       
 
   [Parameter]
-  public int Value { get; set; }
+  public Gauge OrbGauge { get; set; }
+
 
   [Parameter]
-  public int Max { get; set; }
+  public EventCallback<Gauge> ChangedCallback { get; set; }
+
+  private float Percentage => ((float)OrbGauge.Value / (float)OrbGauge.Max)*100;
+
 }

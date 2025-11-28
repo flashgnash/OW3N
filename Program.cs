@@ -1,9 +1,10 @@
 using System.Security.Claims;
 using System.Text.Json;
-using dotnet.Components;
+using Ordis.Components;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using DotNetEnv;
+using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -18,13 +19,26 @@ builder.Services.Configure<Dictionary<string,APIConfig>>(
 
 Env.Load();
 
-var connStr = builder.Configuration.GetConnectionString("CharacterDb");
 
 builder.Services.AddHttpClient();
 
-builder.Services.AddSingleton(new PlayerCharacterService(connStr));
 builder.Services.AddSingleton<RollService>();
 builder.Services.AddSingleton<DiscordService>();
+
+
+
+// builder.Services.AddDbContext<OrdisContext>(opts =>
+//     opts.UseNpgsql(builder.Configuration.GetConnectionString("CharacterDb")));
+//
+
+builder.Services.AddDbContextFactory<OrdisContext>(opts =>
+    opts.UseNpgsql(builder.Configuration.GetConnectionString("CharacterDb")));
+
+
+builder.Services.AddScoped<PlayerCharacterService>();
+
+
+builder.Services.AddScoped<UserState>();
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -43,6 +57,9 @@ builder.WebHost.ConfigureKestrel((context, options) => {
     options.Configure(context.Configuration.GetSection("Kestrel"));
 });   
 var app = builder.Build();
+
+
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -69,7 +86,7 @@ var clientId = discordConfig["ClientId"];
 var clientSecret = discordConfig["ClientSecret"];
 
 
-var baseUrl = Environment.GetEnvironmentVariable("ASPNETCORE_URLS");
+var baseUrl = Environment.GetEnvironmentVariable("ASPNETCORE_Kestrel__Endpoints__Https__Url");
 
 // Should move this somewhere else - currently unsure of how to implement API endpoints in a blazor pages setup
 // At the very least it should be made into a separate function in another file and called from here

@@ -1,45 +1,59 @@
 @rendermode InteractiveServer
 @inject RollService RollService
 @inject DiscordService DiscordService
+@inject ILogger<RollMenu> Logger
 <!-- Middle -->
 
 <Counter Title="Advantage" Id="Advantage" @bind-CounterValue="Advantage" @bind-CounterValue:after="UpdateAdvantage" />
-
+<br>
 
 
 @if(Character != null) {
 
-
+  <div class="d-flex flex-row flex-nowrap w-100">
   @if(Character.SpecialStats != null){
-    <div id="specialStatButtons" class="m-1 d-flex flex-wrap gap-2 p-2">
-        @foreach (var stat in Character?.SpecialStats)
-        {
-            <button class="btn flex-fill @btnClasses[stat.Name]" @onclick="() => AddStat(stat.Name)">
-                + @stat.Name
-            </button>
-        }
+    <div class="w-100" >
+      <h3 class="text-center">Special</h3>
+        <div id="specialStatButtons" class="m-1 d-flex flex-wrap gap-2 p-2">
+            @foreach (var stat in Character?.SpecialStats
+              .Where(s => !Character.Stats.Any(x => x.Name == s.Name))
+              .ToList()
+            )
+            {
+                <button class="btn flex-fill p-2 @btnClasses[stat.Name]" @onclick="() => AddStat(stat.Name)">
+                    + @stat.Name
+                </button>
+            }
+        </div>
     </div>
   }
 
-  @if(Character.Stats != null) {
-    <div id="statButtons" class="m-1 d-flex flex-wrap gap-2 p-2">
-        @foreach (var stat in Character?.Stats)
-        {
-            <button class="btn flex-fill @btnClasses[stat.Name]" @onclick="() => AddStat(stat.Name)">
-                + @Truncate(stat.Name)
-            </button>
-        }
+  @if(Character.Stats != null){
+    <div class="w-100">
+      <h3 class="text-center"> Stats</h3>
+        <div id="statButtons" class="m-1 d-flex flex-wrap gap-2 p-2">
+            @foreach (var stat in Character?.Stats)
+            {
+                <button class="btn p-2 flex-fill @btnClasses[stat.Name]" @onclick="() => AddStat(stat.Name)">
+                    + @stat.Name
+                </button>
+            }
+        </div>
     </div>
   }
+</div>
 
-  @if(Character.SavedRolls != null) {
+  @if(Character.SavedRollsDict != null) {
     <div id="savedRolls" class="m-auto flex-grow-1">
-      <h3 class="text-center">Saved Rolls</h3>
-      @foreach (var kv in Character.SavedRolls)
+      <h3 class="text-center">Custom Rolls</h3>
+    <div class="d-flex">
+      @foreach (var kv in Character.SavedRollsDict)
       {
-          <button class="btn btn-secondary @btnClasses[kv.Key] m-1" @onclick="() => SetRollText(kv.Value)">@kv.Key </button>
-      }      
+          <button class="btn btn-secondary flex-fill @btnClasses[kv.Key] m-1" @onclick="() => SetRollText(kv.Value)">@kv.Key </button>
+      }
+    </div>      
     </div>
+    <br>
   }
   
 }
@@ -49,6 +63,7 @@
 <div class="m-1 d-flex gap-2 flex-grow-2 bg-light text-black">
   <input class="form-control fs-5" @bind="@RollText" />
 </div>
+<br>
 
 <div class="m-1 d-flex gap-2 flex-grow-2">
   <button class="btn btn-secondary fs-3 flex-grow-1" @onclick="ClearRoll">
@@ -57,19 +72,27 @@
   <button @onclick="Roll" class="btn btn-primary fs-3 flex-grow-1">Roll</button>
 </div>
 
-<div class="flex-shrink-1 m-auto">
-  <div class="text-center m-auto h-100">
+<div class="flex-shrink-1">
+  <div class="text-center h-100">
 
-    <h2 class="">@LastResult?.Result</h2>
-    <ul>
-      @if(LastResult != null) {
-        @foreach(IndividualRollResult roll in LastResult?.Rolls) {
-          <li>@(roll.Expression): @roll.Result</li>
-        
-        }
+    @if(LoadingRoll == true) {
+      <h3>Loading...</h3>
+    }
+
+    @if(ErrorMessage != null){
+      <h3 class="text-danger">@ErrorMessage</h3>
+    }
+
+    <h4><strong>@LastResult?.Result</strong></h4>
+      @if(LastResult?.Result != null) {
+        <span class="text-muted">
+        (@foreach (var g in LastResult?.Rolls.GroupBy(r => r.Expression)) {
+            <span>@g.Key: @string.Join(", ", g.Select(x => x.Result))</span>
+        })
+        </span>
+      
       }
 
-    </ul>
   </div>
 </div>
 
@@ -77,12 +100,36 @@
 
 @code {
 
+    public String? ErrorMessage {get; set;}
+    public bool? LoadingRoll {get; set;}
+
     async Task Roll() {
 
-      var response = await RollService.RollFor(Character,RollText);    
+      try {
+          ErrorMessage = null;
+          LastResult = null;
+          LoadingRoll = true;        
+          var response = await RollService.RollFor(Character,RollText);    
 
-      await DiscordService.SendEmbedAsync($"Rolling for {Character.Name}...", response.Message);    
-      LastResult = response;
+          await DiscordService.SendEmbedAsync($"Rolling for {Character.Name}...", response.Message);    
+          LastResult = response;
+          LoadingRoll = false;
+        }
+        catch (Exception e){
+          LoadingRoll = false;
+          Console.ForegroundColor = ConsoleColor.Red;
+          Console.WriteLine($"Caught exception: {e.Message}");
+          Console.ResetColor();
+
+          
+          Logger.LogError(e.Message);
+
+          if(e is HttpRequestException)
+            ErrorMessage = "Connection error. Ordis is probably down";
+
+          if(e is InvalidRollException)
+            ErrorMessage = "Invalid roll";
+        } 
     }
 
     public RollResult? LastResult {get; set;}
@@ -144,8 +191,8 @@
                 btnClasses[stat.Name] = "btn-secondary";
 
             }
-            if(Character?.SavedRolls != null) {
-              foreach (var savedRoll in Character?.SavedRolls)
+            if(Character?.SavedRollsDict != null) {
+              foreach (var savedRoll in Character?.SavedRollsDict)
                 btnClasses[savedRoll.Key] = "btn-secondary";
             }
         }
