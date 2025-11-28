@@ -39,10 +39,7 @@
       <StatBlock Stats="@Char.Stats" FlexFill="true" />
       }
     </div>
-
-    <div class="m-1">
-      <canvas id="radar"></canvas>
-    </div>
+    <Radar/>
     </div>
 
     @if(Char?.Gauges != null){
@@ -121,48 +118,6 @@ else{
   <h1>Either this character doesn't exist or you don't have access</h1>
 }
 
-<script>
-
-new Chart(document.getElementById("radar"), {
-  type: "radar",
-  "label": "Stat",
-
-  options: {
-    plugins: { legend: { display: false } },
-
-    scales: {
-      r: {
-        min: 1,
-      }
-    },
-  },
-
-  
-  data: {
-
-  labels: [
-    @foreach (var s in Char.Stats)
-    {
-      @:"@s.Name",
-    }
-  ],
-  datasets: [{
-
- data: [
-    @foreach (var s in Char.Stats)
-    {
-      @:"@s.Value",
-    }
-  ],
-
-  
-  }]
-  }
-});
-
-
-
-</script>
 
 
 
