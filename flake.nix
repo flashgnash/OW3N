@@ -60,6 +60,35 @@
                 dotnet watch run
               ''))
 
+            (pkgs.writeShellScriptBin "updateDatabase" (
+              # bash
+              ''
+                export $(grep -v '^#' .env | xargs)
+                dotnet tool restore
+                dotnet ef database update
+              ''))
+
+            (pkgs.writeShellScriptBin "initDatabase" (
+              # bash
+              ''
+                #!/usr/bin/env bash
+
+                if ! command -v psql >/dev/null 2>&1; then
+                  echo "psql no here. Need PostgreSQL."
+                  exit 1
+                fi
+
+                read -r -s -p "Enter password for ow3n: " PW
+                echo
+
+                sudo -u postgres psql -v pw="$PW" -f initDb.sql
+
+                echo "connectionstrings__characterdb=\"host=localhost;username=ow3n;password=$PW;database=ow3n\"" >> .env
+
+                updateDatabase
+
+              ''))
+
             netcoredbg
             bruno
             omnisharp-roslyn
