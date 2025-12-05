@@ -17,7 +17,7 @@ builder.Services.Configure<RpgConfig>(
 builder.Services.Configure<Dictionary<string,APIConfig>>(
     builder.Configuration.GetSection("ApiConfig"));
 
-builder.Services.AddSingleton<CharacterInterceptor>();
+// builder.Services.AddSingleton<CharacterInterceptor>();
 
 
 Env.Load();
@@ -36,7 +36,8 @@ builder.Services.AddSingleton<DiscordService>();
 
 builder.Services.AddDbContextFactory<OrdisContext>((sp, opts) => {
     opts.UseNpgsql(builder.Configuration.GetConnectionString("CharacterDb"));
-    opts.AddInterceptors(sp.GetRequiredService<CharacterInterceptor>());
+    // .UseLazyLoadingProxies(); //Can't have lazy loading cause postgres doesn't like it :(
+    // opts.AddInterceptors(sp.GetRequiredService<CharacterInterceptor>());
 });
 
 

@@ -96,7 +96,7 @@ public partial class PlayerCharacter
     [NotMapped]
     public IEnumerable<Status>? Statuses { get; set; }
 
-    public List<Gauge>? Gauges {get; set;}
+    public ICollection<Gauge>? Gauges {get; set;}
 
     // public string? StatBlockHash { get; set; }
     [Column("stat_block")]

@@ -111,15 +111,27 @@ else
 
     [Parameter] public int CharacterId { get; set; }
 
-    public async Task GaugeChangedCallback(Gauge gauge) {
-        await CharService.UpdateAsync(Char);
-        Console.WriteLine("Hello world");
+    public async Task GaugeChangedCallback(Gauge gauge)
+    {
+        if (gauge.Id == Guid.Empty)
+            gauge.Id = Guid.NewGuid();
+
+
+        Console.WriteLine($"Gauges: {Char.Gauges.Count()}");
+
+
+        <!-- await CharService.UpdateGaugeAsync(gauge); -->
+        await CharService.UpdateGaugeAsync(gauge);
+        Console.WriteLine($"Gauges: {Char.Gauges.Count()}");
+        
     }
 
 
     protected async override Task OnInitializedAsync()
     {
         var character = await CharService.GetByIdAsync(CharacterId);
+
+
 
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
@@ -132,6 +144,24 @@ else
         {
             UserState.SelectedCharacter = character;
             Char = character;
+
+
+            if (character.Gauges?.Count == 0 && character.MaxHealth != null)
+            {
+                var newGauge = new Gauge {
+                    Id = Guid.NewGuid(),
+                    PlayerCharacterId = Char.Id,
+                    Name = "Health",
+                    Max = character.MaxHealth ?? 0,
+                    Value = character.CurrentHealth ?? character.MaxHealth ?? 0,
+                };
+        
+                character.Gauges.Add(newGauge);
+
+                Console.WriteLine($"New gauge {newGauge.Id} {newGauge.Name}");
+            }
+
+            
         }
         else
         {

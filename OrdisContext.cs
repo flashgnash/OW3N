@@ -12,6 +12,7 @@ public partial class OrdisContext : DbContext
 
     public virtual DbSet<PlayerCharacter> Characters { get; set; }
 
+    public virtual DbSet<Gauge> Gauges { get; set; }
 
     public virtual DbSet<Server> Servers { get; set; }
 
@@ -48,6 +49,8 @@ public partial class OrdisContext : DbContext
         });
 
 
+
+    
         modelBuilder.Entity<Server>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("servers_pkey");
@@ -58,6 +61,7 @@ public partial class OrdisContext : DbContext
             entity.Property(e => e.DefaultRollChannel).HasColumnName("default_roll_channel");
             entity.Property(e => e.DefaultRollServer).HasColumnName("default_roll_server");
         });
+
 
         modelBuilder.Entity<User>(entity =>
         {
