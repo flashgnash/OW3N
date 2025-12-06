@@ -160,24 +160,18 @@
         return;
 
       OrbGauge.Value += value;
-      ChangeHistory.Add((value,DateTime.Now));
-             
-      if (ChangedCallback.HasDelegate)
-          ChangedCallback.InvokeAsync(OrbGauge);
-
       
   }
 
   async Task Set(int value) {
     var change = value - OrbGauge.Value;
-    ChangeHistory.Add((change,DateTime.Now));       
     OrbGauge.Value = value;
 
-    
-    if (ChangedCallback.HasDelegate)
-        ChangedCallback.InvokeAsync(OrbGauge);
   }
 
+    protected async override Task OnInitializedAsync() {
+      _lastValue = OrbGauge.Value;
+    }
   
   void Increment() => Modify(IncrementValue);
   void Decrement() => Modify(-IncrementValue);       
@@ -190,5 +184,42 @@
   public EventCallback<Gauge> ChangedCallback { get; set; }
 
   private float Percentage => ((float)OrbGauge.Value / (float)OrbGauge.Max)*100;
+
+
+
+    private int _lastValue;
+    private Timer? _debounceTimer;
+    private readonly object _debounceLock = new();
+
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (_lastValue != OrbGauge.Value)
+        {
+            QueueDebouncedCallback();
+        }
+    }
+
+    private void QueueDebouncedCallback()
+    {
+        int currentValue = OrbGauge.Value; // capture current for timer
+        lock (_debounceLock)
+        {
+            _debounceTimer?.Dispose();
+            _debounceTimer = new Timer(async _ =>
+            {
+                _debounceTimer?.Dispose();
+                _debounceTimer = null;
+
+                var delta = currentValue - _lastValue; // old minus new
+                ChangeHistory.Add((delta, DateTime.Now));
+
+                _lastValue = currentValue; // update last value after delta
+
+                if (ChangedCallback.HasDelegate)
+                    await InvokeAsync(() => ChangedCallback.InvokeAsync(OrbGauge));
+            }, null, 1000, Timeout.Infinite);
+        }
+      }
 
 }
