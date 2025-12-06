@@ -6,6 +6,7 @@ using System.Text.Json;
 public partial class PlayerCharacter
 {
 
+
     public int Id { get; set; }
     public string? UserId { get; set; }
     public string? Name { get; set; }
@@ -95,28 +96,7 @@ public partial class PlayerCharacter
     [NotMapped]
     public IEnumerable<Status>? Statuses { get; set; }
 
-    [NotMapped]
-    public List<Gauge> Gauges
-    {
-        get
-        {
-            var gauges = new List<Gauge>();
-
-            if (CurrentHealth.HasValue && MaxHealth.HasValue)
-                gauges.Add(new Gauge {Icon = "", Name = "Health", Value = CurrentHealth.Value, Max = MaxHealth.Value });
-
-            if (Mana.HasValue && EnergyPool.HasValue)
-                gauges.Add(new Gauge { Name = "Energy", Value = Mana.Value, Max = EnergyPool.Value  });
-
-            if (CurrentSoul.HasValue && MaxSoul.HasValue)
-                gauges.Add(new Gauge { Name = "Soul", Value = CurrentSoul.Value, Max = MaxSoul.Value });
-
-            // if (CurrentArmour.HasValue && MaxArmour.HasValue)
-            //     gauges.Add(new Gauge { Name = "Armour", Value = CurrentArmour.Value, Max = MaxArmour.Value });
-
-            return gauges;
-        }
-    }
+    public List<Gauge>? Gauges {get; set;}
 
     // public string? StatBlockHash { get; set; }
     [Column("stat_block")]
@@ -167,7 +147,6 @@ public partial class PlayerCharacter
     int? TryGetInt(string prop)
     {
 
-        Console.WriteLine($"\n\n\n{StatBlock.RootElement.GetRawText()} : finding {prop}");
         if (StatBlock?.RootElement.TryGetProperty(prop, out var p) == true && p.ValueKind == JsonValueKind.Number && p.TryGetInt32(out var v))
             return v;
         return null;

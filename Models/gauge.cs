@@ -1,4 +1,9 @@
+using System.ComponentModel.DataAnnotations;
+
 public class Gauge {
+
+	[Key]
+	public Guid Id {get; set;}
 
 	private Dictionary<string, string> _colourLookup = new Dictionary<string, string>
 	{

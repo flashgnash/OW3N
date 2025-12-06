@@ -17,6 +17,7 @@ public partial class OrdisContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<PlayerCharacter>(entity =>
