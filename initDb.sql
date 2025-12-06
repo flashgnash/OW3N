@@ -1,0 +1,3 @@
+-- init_user.sql
+CREATE ROLE ow3n WITH LOGIN CREATEDB PASSWORD :'pw';
+
