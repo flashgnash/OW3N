@@ -1,20 +1,5 @@
 {
   "version": 1,
   "isRoot": true,
-  "tools": {
-    "blazorlore.format.cli": {
-      "version": "1.0.3",
-      "commands": [
-        "blazorfmt"
-      ],
-      "rollForward": false
-    },
-    "dotnet-ef": {
-      "version": "9.0.0",
-      "commands": [
-        "dotnet-ef"
-      ],
-      "rollForward": false
-    }
-  }
+  "tools": {}
 }

@@ -1,5 +1,5 @@
 {
-  description = "Fetchpet web UI";
+  description = "OW3N";
 
   inputs = {
     nixpkgs = {
@@ -10,7 +10,12 @@
     };
   };
   outputs =
-    { nixpkgs, flake-utils, ... }:
+    {
+      nixpkgs,
+      flake-utils,
+      self,
+      ...
+    }:
     flake-utils.lib.eachDefaultSystem (
       system:
       let
@@ -19,85 +24,124 @@
         };
 
         dotnetPkg = pkgs.dotnetCorePackages.sdk_9_0;
+
+        buildDeps = with pkgs; [
+          nodejs
+          dotnetPkg
+          zlib
+          zlib.dev
+          openssl
+        ];
+
+        projectFile = "Ordis.csproj";
+        projectName = "OW3N";
+        nugetDeps = ./deps.json;
+        description = "Flexible D&D app";
+        version = "1.0";
       in
       {
+
+        packages = {
+          default = pkgs.buildDotnetModule {
+            dotnet-sdk = dotnetPkg;
+            pname = projectName;
+            version = version;
+            src = ./.;
+            projectFile = projectFile;
+            nugetDeps = nugetDeps;
+            meta = {
+              description = description;
+              license = pkgs.lib.licenses.mit;
+            };
+          };
+        };
+
         devShell = pkgs.mkShell {
-          buildInputs = with pkgs; [
-            zlib
+          buildInputs =
+            with pkgs;
+            [
 
-            zlib.dev
-            openssl
-            dotnetPkg
+              (pkgs.writeShellScriptBin "compileSass" (''sass sass/app.scss wwwroot/app.css''))
+              (pkgs.writeShellScriptBin "watchSass" (''sass --watch sass/app.scss:wwwroot/app.css ''))
 
-            (pkgs.writeShellScriptBin "compileSass" (''sass sass/app.scss wwwroot/app.css''))
-            (pkgs.writeShellScriptBin "watchSass" (''sass --watch sass/app.scss:wwwroot/app.css ''))
+              (pkgs.writeShellScriptBin "publishAndRun" (
+                # bash
+                ''
+                  dotnet publish -c Release
+                  export $(grep -v '^#' .env | xargs)
+                  cp .env bin/Release/net9.0/publish/
+                  cd bin/Release/net9.0/publish/
+                  dotnet Ordis.dll
+                ''))
 
-            (pkgs.writeShellScriptBin "publishAndRun" (
-              # bash
-              ''
-                dotnet publish -c Release
-                export $(grep -v '^#' .env | xargs)
-                cp .env bin/Release/net9.0/publish/
-                cd bin/Release/net9.0/publish/
-                dotnet Ordis.dll
-              ''))
+              (pkgs.writeShellScriptBin "run" (
+                # bash
+                ''
+                  export $(grep -v '^#' .env | xargs)
 
-            (pkgs.writeShellScriptBin "run" (
-              # bash
-              ''
-                export $(grep -v '^#' .env | xargs)
+                  sass --watch sass/app.scss:wwwroot/app.css &
+                  p1=$!
 
-                sass --watch sass/app.scss:wwwroot/app.css &
-                p1=$!
+                  cleanup() {
+                      kid=$(pgrep -P "$p1")
+                      kill "$kid" "$p1" 2>/dev/null
+                  }
+                  trap cleanup EXIT
+                  trap cleanup INT
 
-                cleanup() {
-                    kid=$(pgrep -P "$p1")
-                    kill "$kid" "$p1" 2>/dev/null
-                }
-                trap cleanup EXIT
-                trap cleanup INT
+                  dotnet watch run
+                ''))
 
-                dotnet watch run
-              ''))
+              (pkgs.writeShellScriptBin "updateDatabase" (
+                # bash
+                ''
+                  export $(grep -v '^#' .env | xargs)
+                  dotnet tool restore
+                  dotnet ef database update
+                ''))
 
-            (pkgs.writeShellScriptBin "updateDatabase" (
-              # bash
-              ''
-                export $(grep -v '^#' .env | xargs)
-                dotnet tool restore
-                dotnet ef database update
-              ''))
+              (pkgs.writeShellApplication {
+                name = "updateDeps";
 
-            (pkgs.writeShellScriptBin "initDatabase" (
-              # bash
-              ''
-                #!/usr/bin/env bash
+                runtimeInputs = with pkgs; [
+                  dotnetPkg
+                  nuget-to-json
 
-                if ! command -v psql >/dev/null 2>&1; then
-                  echo "psql no here. Need PostgreSQL."
-                  exit 1
-                fi
+                ];
 
-                read -r -s -p "Enter password for ow3n: " PW
-                echo
+                text = ''
+                  dotnet restore --packages=packageDir                     
+                  nuget-to-json packageDir > deps.json
+                '';
+              })
 
-                sudo -u postgres psql -v pw="$PW" -f initDb.sql
+              (pkgs.writeShellScriptBin "initDatabase" (
+                # bash
+                ''
+                  #!/usr/bin/env bash
 
-                echo "connectionstrings__characterdb=\"host=localhost;username=ow3n;password=$PW;database=ow3n\"" >> .env
+                  if ! command -v psql >/dev/null 2>&1; then
+                    echo "psql no here. Need PostgreSQL."
+                    exit 1
+                  fi
 
-                updateDatabase
+                  read -r -s -p "Enter password for ow3n: " PW
+                  echo
 
-              ''))
+                  sudo -u postgres psql -v pw="$PW" -f initDb.sql
 
-            netcoredbg
-            bruno
-            omnisharp-roslyn
-            dart-sass
+                  echo "connectionstrings__characterdb=\"host=localhost;username=ow3n;password=$PW;database=ow3n\"" >> .env
 
-            nodejs # Begrudgingly I need npm
+                  updateDatabase
 
-            sqlite
-          ];
+                ''))
+
+              netcoredbg
+              bruno
+              omnisharp-roslyn
+              dart-sass
+            ]
+            ++ buildDeps;
 
           shellHook = ''
             DOTNET_ROOT="${dotnetPkg}"
