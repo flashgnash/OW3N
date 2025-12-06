@@ -57,7 +57,7 @@ public partial class PlayerCharacter
     {
         get
         {
-            if (StatBlock?.RootElement.TryGetProperty("stats", out var stats) == true && stats.ValueKind == JsonValueKind.Object)
+            if (StatBlockJson?.RootElement.TryGetProperty("stats", out var stats) == true && stats.ValueKind == JsonValueKind.Object)
             {
                 var list = new List<Stat>();
                 foreach (var prop in stats.EnumerateObject())
@@ -78,7 +78,7 @@ public partial class PlayerCharacter
     {
         get
         {
-            if (StatBlock?.RootElement.TryGetProperty("special_stats", out var stats) == true && stats.ValueKind == JsonValueKind.Object)
+            if (StatBlockJson?.RootElement.TryGetProperty("special_stats", out var stats) == true && stats.ValueKind == JsonValueKind.Object)
             {
                 var list = new List<Stat>();
                 foreach (var prop in stats.EnumerateObject())
@@ -100,7 +100,9 @@ public partial class PlayerCharacter
 
     // public string? StatBlockHash { get; set; }
     [Column("stat_block")]
-    public JsonDocument? StatBlock { get; set; }
+    public string? StatBlock { get; set; }
+    public JsonDocument? StatBlockJson => string.IsNullOrEmpty(StatBlock) ? null : JsonDocument.Parse(StatBlock);
+
     public string? StatBlockHash { get; set; }
     public string? StatBlockMessageId { get; set; }
     public string? StatBlockChannelId { get; set; }
@@ -151,14 +153,14 @@ public partial class PlayerCharacter
     int? TryGetInt(string prop)
     {
 
-        if (StatBlock?.RootElement.TryGetProperty(prop, out var p) == true && p.ValueKind == JsonValueKind.Number && p.TryGetInt32(out var v))
+        if (StatBlockJson?.RootElement.TryGetProperty(prop, out var p) == true && p.ValueKind == JsonValueKind.Number && p.TryGetInt32(out var v))
             return v;
         return null;
     }
 
     string? TryGetString(string prop)
     {
-        if (StatBlock?.RootElement.TryGetProperty(prop, out var p) == true && p.ValueKind == JsonValueKind.String)
+        if (StatBlockJson?.RootElement.TryGetProperty(prop, out var p) == true && p.ValueKind == JsonValueKind.String)
             return p.GetString();
         return null;
     }
