@@ -3,6 +3,7 @@ using System;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Ordis.Migrations
 {
     [DbContext(typeof(OrdisContext))]
-    partial class OrdisContextModelSnapshot : ModelSnapshot
+    [Migration("20251206145037_DynamicGauges_Squash")]
+    partial class DynamicGauges_Squash
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -100,22 +103,6 @@ namespace Ordis.Migrations
                     b.Property<JsonDocument>("StatBlock")
                         .HasColumnType("jsonb")
                         .HasColumnName("stat_block");
-
-                    b.Property<string>("StatBlockChannelId")
-                        .HasColumnType("text")
-                        .HasColumnName("stat_block_channel_id");
-
-                    b.Property<string>("StatBlockHash")
-                        .HasColumnType("text")
-                        .HasColumnName("stat_block_hash");
-
-                    b.Property<string>("StatBlockMessageId")
-                        .HasColumnType("text")
-                        .HasColumnName("stat_block_message_id");
-
-                    b.Property<string>("StatBlockServerId")
-                        .HasColumnType("text")
-                        .HasColumnName("stat_block_server_id");
 
                     b.Property<string>("UserId")
                         .HasColumnType("text")

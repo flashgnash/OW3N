@@ -11,41 +11,25 @@ namespace Ordis.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "stat_block_channel_id",
-                table: "characters");
+            // migrationBuilder.RenameColumn(
+            //     name: "stat_block_message_id",
+            //     table: "users",
+            //     newName: "StatBlockMessageId");
 
-            migrationBuilder.DropColumn(
-                name: "stat_block_hash",
-                table: "characters");
+            // migrationBuilder.RenameColumn(
+            //     name: "stat_block_hash",
+            //     table: "users",
+            //     newName: "StatBlockHash");
 
-            migrationBuilder.DropColumn(
-                name: "stat_block_message_id",
-                table: "characters");
+            // migrationBuilder.RenameColumn(
+            //     name: "stat_block_channel_id",
+            //     table: "users",
+            //     newName: "StatBlockChannelId");
 
-            migrationBuilder.DropColumn(
-                name: "stat_block_server_id",
-                table: "characters");
-
-            migrationBuilder.RenameColumn(
-                name: "stat_block_message_id",
-                table: "users",
-                newName: "StatBlockMessageId");
-
-            migrationBuilder.RenameColumn(
-                name: "stat_block_hash",
-                table: "users",
-                newName: "StatBlockHash");
-
-            migrationBuilder.RenameColumn(
-                name: "stat_block_channel_id",
-                table: "users",
-                newName: "StatBlockChannelId");
-
-            migrationBuilder.RenameColumn(
-                name: "stat_block",
-                table: "users",
-                newName: "StatBlock");
+            // migrationBuilder.RenameColumn(
+            //     name: "stat_block",
+            //     table: "users",
+            //     newName: "StatBlock");
 
             migrationBuilder.CreateTable(
                 name: "Gauge",
@@ -80,49 +64,49 @@ namespace Ordis.Migrations
             migrationBuilder.DropTable(
                 name: "Gauge");
 
-            migrationBuilder.RenameColumn(
-                name: "StatBlockMessageId",
-                table: "users",
-                newName: "stat_block_message_id");
+            // migrationBuilder.RenameColumn(
+            //     name: "StatBlockMessageId",
+            //     table: "users",
+            //     newName: "stat_block_message_id");
 
-            migrationBuilder.RenameColumn(
-                name: "StatBlockHash",
-                table: "users",
-                newName: "stat_block_hash");
+            // migrationBuilder.RenameColumn(
+            //     name: "StatBlockHash",
+            //     table: "users",
+            //     newName: "stat_block_hash");
 
-            migrationBuilder.RenameColumn(
-                name: "StatBlockChannelId",
-                table: "users",
-                newName: "stat_block_channel_id");
+            // migrationBuilder.RenameColumn(
+            //     name: "StatBlockChannelId",
+            //     table: "users",
+            //     newName: "stat_block_channel_id");
 
-            migrationBuilder.RenameColumn(
-                name: "StatBlock",
-                table: "users",
-                newName: "stat_block");
+            // migrationBuilder.RenameColumn(
+            //     name: "StatBlock",
+            //     table: "users",
+            //     newName: "stat_block");
 
-            migrationBuilder.AddColumn<string>(
-                name: "stat_block_channel_id",
-                table: "characters",
-                type: "text",
-                nullable: true);
+            // migrationBuilder.AddColumn<string>(
+            //     name: "stat_block_channel_id",
+            //     table: "characters",
+            //     type: "text",
+            //     nullable: true);
 
-            migrationBuilder.AddColumn<string>(
-                name: "stat_block_hash",
-                table: "characters",
-                type: "text",
-                nullable: true);
+            // migrationBuilder.AddColumn<string>(
+            //     name: "stat_block_hash",
+            //     table: "characters",
+            //     type: "text",
+            //     nullable: true);
 
-            migrationBuilder.AddColumn<string>(
-                name: "stat_block_message_id",
-                table: "characters",
-                type: "text",
-                nullable: true);
+            // migrationBuilder.AddColumn<string>(
+            //     name: "stat_block_message_id",
+            //     table: "characters",
+            //     type: "text",
+            //     nullable: true);
 
-            migrationBuilder.AddColumn<string>(
-                name: "stat_block_server_id",
-                table: "characters",
-                type: "text",
-                nullable: true);
+            // migrationBuilder.AddColumn<string>(
+            //     name: "stat_block_server_id",
+            //     table: "characters",
+            //     type: "text",
+            //     nullable: true);
         }
     }
 }

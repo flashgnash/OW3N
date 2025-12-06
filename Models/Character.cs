@@ -101,8 +101,12 @@ public partial class PlayerCharacter
     // public string? StatBlockHash { get; set; }
     [Column("stat_block")]
     public JsonDocument? StatBlock { get; set; }
-    // public string? StatBlockMessageId { get; set; }
-    // public string? StatBlockChannelId { get; set; }
+    public string? StatBlockHash { get; set; }
+    public string? StatBlockMessageId { get; set; }
+    public string? StatBlockChannelId { get; set; }
+    public string? StatBlockServerId { get; set; }
+
+    
     public string? SpellBlockChannelId { get; set; }
     public string? SpellBlockMessageId { get; set; }
     public string? SpellBlock { get; set; }

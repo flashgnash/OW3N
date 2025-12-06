@@ -41,10 +41,10 @@ public partial class OrdisContext : DbContext
             entity.Property(e => e.SpellBlockChannelId).HasColumnName("spell_block_channel_id");
             entity.Property(e => e.SpellBlockHash).HasColumnName("spell_block_hash");
             entity.Property(e => e.SpellBlockMessageId).HasColumnName("spell_block_message_id");
-            // entity.Property(e => e.StatBlockChannelId).HasColumnName("stat_block_channel_id");
-            // entity.Property(e => e.StatBlockHash).HasColumnName("stat_block_hash");
-            // entity.Property(e => e.StatBlockMessageId).HasColumnName("stat_block_message_id");
-            // entity.Property(e => e.StatBlockServerId).HasColumnName("stat_block_server_id");
+            entity.Property(e => e.StatBlockChannelId).HasColumnName("stat_block_channel_id");
+            entity.Property(e => e.StatBlockHash).HasColumnName("stat_block_hash");
+            entity.Property(e => e.StatBlockMessageId).HasColumnName("stat_block_message_id");
+            entity.Property(e => e.StatBlockServerId).HasColumnName("stat_block_server_id");
             entity.Property(e => e.UserId).HasColumnName("user_id");
         });
 
