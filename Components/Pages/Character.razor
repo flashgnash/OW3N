@@ -117,12 +117,12 @@ else
             gauge.Id = Guid.NewGuid();
 
 
-        Console.WriteLine($"Gauges: {Char.Gauges.Count()}");
+        <!-- Console.WriteLine($"Gauges: {Char.Gauges.Count()}"); -->
 
 
         <!-- await CharService.UpdateGaugeAsync(gauge); -->
         await CharService.UpdateGaugeAsync(gauge);
-        Console.WriteLine($"Gauges: {Char.Gauges.Count()}");
+        <!-- Console.WriteLine($"Gauges: {Char.Gauges.Count()}"); -->
         
     }
 
@@ -158,7 +158,7 @@ else
         
                 character.Gauges.Add(newGauge);
 
-                Console.WriteLine($"New gauge {newGauge.Id} {newGauge.Name}");
+                <!-- Console.WriteLine($"New gauge {newGauge.Id} {newGauge.Name}"); -->
             }
 
             
