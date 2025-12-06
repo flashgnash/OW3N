@@ -218,7 +218,7 @@
 
                 if (ChangedCallback.HasDelegate)
                     await InvokeAsync(() => ChangedCallback.InvokeAsync(OrbGauge));
-            }, null, 1000, Timeout.Infinite);
+            }, null, 500, Timeout.Infinite);
         }
       }
 
