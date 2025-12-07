@@ -1,0 +1,31 @@
+<div class="d-flex justify-content-center">
+    <div class="gauge-bar" style="position:relative; display:inline-flex; height:@(IconSize)em; font-size:@BaseFontSize;">
+        <!-- background (empty) icons -->
+        @for (int i = 0; i < MaxIcons; i++)
+        {
+            <span class="icon-empty" style="width:1em; height:1em; font-size:1em; display:inline-block; color:lightgray;">
+                @IconSymbol
+            </span>
+        }
+
+        <!-- filled overlay -->
+        <div class="filled-overlay" style="position:absolute; top:0; left:0; width:@(FilledFraction*MaxIcons*IconSize)em; height:1em; overflow:hidden; white-space:nowrap;">
+            @for (int i = 0; i < MaxIcons; i++)
+            {
+                <span class="icon-filled" style="width:1em; font-size:1em; height:1em; display:inline-block; color:@GaugeInstance.Colour;">
+                    @IconSymbol
+                </span>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Gauge GaugeInstance { get; set; } = default!;
+    [Parameter] public int MaxIcons { get; set; } = 10;
+    [Parameter] public double IconSize { get; set; } = 3; // em per icon
+    [Parameter] public string IconSymbol { get; set; } = "♥";
+    [Parameter] public string BaseFontSize { get; set; } = "3vw"; // configurable base font size
+
+    double FilledFraction => Math.Min(1.0, (double)GaugeInstance.Value / GaugeInstance.Max);
+}
