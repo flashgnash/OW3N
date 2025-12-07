@@ -56,7 +56,7 @@
                 {
                     @if (!(gauge?.Max == 0 && gauge?.Value == 0))
                     {
-                        <Orb OrbGauge="@gauge" ChangedCallback="@GaugeChangedCallback"   />
+                        <GaugeDisplay GaugeInstance="@gauge" ChangedCallback="@GaugeChangedCallback"   />
                     }
                             
                 }

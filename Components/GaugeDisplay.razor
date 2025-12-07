@@ -1,12 +1,12 @@
-@rendermode InteractiveServer
+ @rendermode InteractiveServer
 @inject ILogger<Orb> Log
 @using Microsoft.AspNetCore.Components
 
 @if(AllowDialog) {
-    <Modal Title="@("Edit " + OrbGauge.Name)" id="@OrbGauge.Name">
+    <Modal Title="@("Edit " + GaugeInstance.Name)" id="@GaugeInstance.Name">
         <div class=p-3>
           <div class="d-flex flex-row flex-wrap gap-3">
-            <Orb OrbGauge="@OrbGauge" AllowDialog="false" />
+            <Orb GaugeInstance="@GaugeInstance" />
             <div class="m-auto flex-grow-1">
 
               <h3 class="w-100 text-center">Set</h3>
@@ -16,19 +16,19 @@
                  Zero
                   </button>
 
-              <input type="number" class="w-100 form-control" @bind="@OrbGauge.Value">
-                  <button @onclick="() => Set(OrbGauge.Max)" class="btn btn-primary w-100">
+              <input type="number" class="w-100 form-control" @bind="@GaugeInstance.Value">
+                  <button @onclick="() => Set(GaugeInstance.Max)" class="btn btn-primary w-100">
                   Max
                   </button>
               </div>
 
-              <Slider @bind-Value="@OrbGauge.Value" Min="0" Max="@OrbGauge.Max" class="w-100" />
-              <!-- <input type="range" class="w-100" @bind="@OrbGauge.Value" max="@OrbGauge.Max" style=" "/> -->
+              <Slider @bind-Value="@GaugeInstance.Value" Min="0" Max="@GaugeInstance.Max" class="w-100" />
+              <!-- <input type="range" class="w-100" @bind="@GaugeInstance.Value" max="@GaugeInstance.Max" style=" "/> -->
               <br>
               <br>
               <h3 class="w-100 text-center">Damage/Heal</h3>
 
-              <!-- <input type="range" class="w-100" @bind="@IncrementValue" max="@OrbGauge.Max" style=" "/> -->
+              <!-- <input type="range" class="w-100" @bind="@IncrementValue" max="@GaugeInstance.Max" style=" "/> -->
 
 
 
@@ -61,7 +61,7 @@
 
               </div>
 
-                <Slider @bind-Value="@IncrementValue" Min="@(-OrbGauge.Max)" Max="@OrbGauge.Max" class="flex-grow-1 w-100" />
+                <Slider @bind-Value="@IncrementValue" Min="@(-GaugeInstance.Max)" Max="@GaugeInstance.Max" class="flex-grow-1 w-100" />
               
             </div>
 
@@ -111,26 +111,10 @@
 
 
 }
-<a href="javascript:void(0)" onclick="@(OrbGauge.Name).showModal()" class="orb m-auto" style="max-width: 40%">
 
-  <div class="orb-label d-flex flex-wrap">
-  <div class="d-flex flex-row w-100">
-    @OrbGauge.Name
-  </div >
-
-  <div class="d-flex flex-row m-100 m-auto">
-     <!-- <input style="width: 50px;" value="@OrbGauge.Value"/> -->
-      <span class="m-auto">@OrbGauge.Value</span>
-    
-      <span class="m-auto">/</span>
-
-      <span class="m-auto">@OrbGauge.Max</span>
-  </div>
-  </div>
-
-
-  <div class="orb-liquid" style="height:@Percentage%; --orb-colour:@OrbGauge.Colour">
-  </div>
+<a href="javascript:void(0)" onclick="@(GaugeInstance.Name).showModal()" class="w-100 h-100">
+  <Orb GaugeInstance="@GaugeInstance"/>
+  
 </a>
 
 
@@ -159,31 +143,31 @@
       if(value == 0)
         return;
 
-      OrbGauge.Value += value;
+      GaugeInstance.Value += value;
       
   }
 
   async Task Set(int value) {
-    var change = value - OrbGauge.Value;
-    OrbGauge.Value = value;
+    var change = value - GaugeInstance.Value;
+    GaugeInstance.Value = value;
 
   }
 
     protected async override Task OnInitializedAsync() {
-      _lastValue = OrbGauge.Value;
+      _lastValue = GaugeInstance.Value;
     }
   
   void Increment() => Modify(IncrementValue);
   void Decrement() => Modify(-IncrementValue);       
 
   [Parameter]
-  public Gauge OrbGauge { get; set; }
+  public Gauge GaugeInstance { get; set; }
 
 
   [Parameter]
   public EventCallback<Gauge> ChangedCallback { get; set; }
 
-  private float Percentage => ((float)OrbGauge.Value / (float)OrbGauge.Max)*100;
+  private float Percentage => ((float)GaugeInstance.Value / (float)GaugeInstance.Max)*100;
 
 
 
@@ -194,7 +178,7 @@
 
     protected override void OnAfterRender(bool firstRender)
     {
-        if (_lastValue != OrbGauge.Value)
+        if (_lastValue != GaugeInstance.Value)
         {
             QueueDebouncedCallback();
         }
@@ -202,7 +186,7 @@
 
     private void QueueDebouncedCallback()
     {
-        int currentValue = OrbGauge.Value; // capture current for timer
+        int currentValue = GaugeInstance.Value; // capture current for timer
         lock (_debounceLock)
         {
             _debounceTimer?.Dispose();
@@ -217,7 +201,7 @@
                 _lastValue = currentValue; // update last value after delta
 
                 if (ChangedCallback.HasDelegate)
-                    await InvokeAsync(() => ChangedCallback.InvokeAsync(OrbGauge));
+                    await InvokeAsync(() => ChangedCallback.InvokeAsync(GaugeInstance));
             }, null, 500, Timeout.Infinite);
         }
       }
