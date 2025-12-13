@@ -121,7 +121,7 @@
 
 }
 
-<a href="javascript:void(0)" onclick="@(GaugeInstance.Name).showModal()" class="w-100 h-100">
+<a href="javascript:void(0)" onclick="@(GaugeInstance.Name).showModal()" class="w-100 h-100 d-flex">
   @switch (@GaugeInstance.GaugeType) {
     case GaugeType.Orb:
       <Orb GaugeInstance="@GaugeInstance"/>
