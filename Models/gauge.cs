@@ -14,7 +14,7 @@ public class Gauge {
 	public static readonly Dictionary<string, GaugeType> GaugeTypeLookup =
 	    new()
 	    {
-	        { "health", GaugeType.Orb },
+	        { "health", GaugeType.IconBar},
 	        { "mana", GaugeType.Orb },
 	        { "hunger", GaugeType.IconBar }
 	    };

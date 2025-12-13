@@ -1,12 +1,21 @@
  @rendermode InteractiveServer
-@inject ILogger<Orb> Log
+@inject ILogger<GaugeDisplay> Log
 @using Microsoft.AspNetCore.Components
 
 @if(AllowDialog) {
     <Modal Title="@("Edit " + GaugeInstance.Name)" id="@GaugeInstance.Name">
         <div class=p-3>
           <div class="d-flex flex-row flex-wrap gap-3">
-            <Orb GaugeInstance="@GaugeInstance" />
+
+            @switch (@GaugeInstance.GaugeType) {
+              case GaugeType.Orb:
+                <Orb GaugeInstance="@GaugeInstance"/>
+                break;
+              case GaugeType.IconBar:
+                <IconBar GaugeInstance="@GaugeInstance"/>
+                break;
+      
+            }
             <div class="m-auto flex-grow-1">
 
               <h3 class="w-100 text-center">Set</h3>
@@ -113,7 +122,15 @@
 }
 
 <a href="javascript:void(0)" onclick="@(GaugeInstance.Name).showModal()" class="w-100 h-100">
-  <Orb GaugeInstance="@GaugeInstance"/>
+  @switch (@GaugeInstance.GaugeType) {
+    case GaugeType.Orb:
+      <Orb GaugeInstance="@GaugeInstance"/>
+      break;
+    case GaugeType.IconBar:
+      <IconBar GaugeInstance="@GaugeInstance"/>
+      break;
+      
+  }
   
 </a>
 
