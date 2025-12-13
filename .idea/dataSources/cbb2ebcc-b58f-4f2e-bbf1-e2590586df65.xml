@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<dataSource name="ordis@localhost">
+<dataSource name="OW3N">
   <database-model serializer="dbm" dbms="POSTGRES" family-id="POSTGRES" format-version="4.53">
     <root id="1">
       <DateStyle>mdy</DateStyle>
@@ -11,9 +11,9 @@
 4||10|c|G
 4||10|C|G
 4||10|T|G</Grants>
-      <IntrospectionStateNumber>944</IntrospectionStateNumber>
+      <IntrospectionStateNumber>1030</IntrospectionStateNumber>
       <ServerVersion>16.11</ServerVersion>
-      <StartupTime>1765029732</StartupTime>
+      <StartupTime>1765636802</StartupTime>
       <TimeZones>true ACDT
 true ACSST
 false ACST
@@ -1411,7 +1411,7 @@ false posix/Zulu
 13278||10|C|G
 13278||-9223372036854775808|U|G
 13278||10|U|G</Grants>
-      <IntrospectionStateNumber>944</IntrospectionStateNumber>
+      <IntrospectionStateNumber>1030</IntrospectionStateNumber>
       <ObjectId>17086</ObjectId>
       <OwnerName>ordis</OwnerName>
     </database>
@@ -4840,15 +4840,15 @@ false posix/Zulu
     <schema id="266" parent="3" name="public">
       <Comment>standard public schema</Comment>
       <Current>1</Current>
-      <IntrospectionStateNumber>944</IntrospectionStateNumber>
-      <LastIntrospectionLocalTimestamp>2025-12-06.15:26:03</LastIntrospectionLocalTimestamp>
+      <IntrospectionStateNumber>1030</IntrospectionStateNumber>
+      <LastIntrospectionLocalTimestamp>2025-12-13.18:06:25</LastIntrospectionLocalTimestamp>
       <ObjectId>2200</ObjectId>
       <StateNumber>523</StateNumber>
       <OwnerName>pg_database_owner</OwnerName>
     </schema>
     <table id="267" parent="266" name="Gauges">
       <ObjectId>17120</ObjectId>
-      <StateNumber>935</StateNumber>
+      <StateNumber>1026</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>ordis</OwnerName>
     </table>
@@ -4860,7 +4860,7 @@ false posix/Zulu
     </table>
     <table id="269" parent="266" name="characters">
       <ObjectId>17092</ObjectId>
-      <StateNumber>935</StateNumber>
+      <StateNumber>946</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>ordis</OwnerName>
     </table>
@@ -4918,7 +4918,15 @@ false posix/Zulu
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
-    <foreign-key id="278" parent="267" name="FK_Gauges_characters_PlayerCharacterId">
+    <column id="278" parent="267" name="GaugeType">
+      <DefaultExpression>0</DefaultExpression>
+      <NotNull>1</NotNull>
+      <Position>7</Position>
+      <StateNumber>1026</StateNumber>
+      <StoredType>integer|0s</StoredType>
+      <TypeId>23</TypeId>
+    </column>
+    <foreign-key id="279" parent="267" name="FK_Gauges_characters_PlayerCharacterId">
       <ColNames>PlayerCharacterId</ColNames>
       <ObjectId>17136</ObjectId>
       <OnDelete>cascade</OnDelete>
@@ -4926,7 +4934,7 @@ false posix/Zulu
       <RefKeyColPositions>1</RefKeyColPositions>
       <RefTableId>17092</RefTableId>
     </foreign-key>
-    <index id="279" parent="267" name="PK_Gauges">
+    <index id="280" parent="267" name="PK_Gauges">
       <ColNames>Id</ColNames>
       <ObjectId>17134</ObjectId>
       <Primary>1</Primary>
@@ -4934,33 +4942,33 @@ false posix/Zulu
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <index id="280" parent="267" name="IX_Gauges_PlayerCharacterId">
+    <index id="281" parent="267" name="IX_Gauges_PlayerCharacterId">
       <ColNames>PlayerCharacterId</ColNames>
       <ObjectId>17132</ObjectId>
       <StateNumber>935</StateNumber>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <key id="281" parent="267" name="PK_Gauges">
+    <key id="282" parent="267" name="PK_Gauges">
       <ObjectId>17135</ObjectId>
       <Primary>1</Primary>
       <StateNumber>935</StateNumber>
       <UnderlyingIndexId>17134</UnderlyingIndexId>
     </key>
-    <column id="282" parent="268" name="MigrationId">
+    <column id="283" parent="268" name="MigrationId">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StateNumber>934</StateNumber>
       <StoredType>varchar(150)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <column id="283" parent="268" name="ProductVersion">
+    <column id="284" parent="268" name="ProductVersion">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StateNumber>934</StateNumber>
       <StoredType>varchar(32)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <index id="284" parent="268" name="PK___EFMigrationsHistory">
+    <index id="285" parent="268" name="PK___EFMigrationsHistory">
       <ColNames>MigrationId</ColNames>
       <ObjectId>17090</ObjectId>
       <Primary>1</Primary>
@@ -4971,149 +4979,149 @@ false posix/Zulu
       <CollationIds>100</CollationIds>
       <CollationParentNames>pg_catalog</CollationParentNames>
     </index>
-    <key id="285" parent="268" name="PK___EFMigrationsHistory">
+    <key id="286" parent="268" name="PK___EFMigrationsHistory">
       <ObjectId>17091</ObjectId>
       <Primary>1</Primary>
       <StateNumber>934</StateNumber>
       <UnderlyingIndexId>17090</UnderlyingIndexId>
     </key>
-    <column id="286" parent="269" name="id">
+    <column id="287" parent="269" name="id">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StateNumber>935</StateNumber>
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
-    <column id="287" parent="269" name="user_id">
+    <column id="288" parent="269" name="user_id">
       <Position>2</Position>
       <StateNumber>935</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
-    <column id="288" parent="269" name="name">
+    <column id="289" parent="269" name="name">
       <Position>3</Position>
       <StateNumber>935</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
-    <column id="289" parent="269" name="roll_server_id">
+    <column id="290" parent="269" name="roll_server_id">
       <Position>4</Position>
       <StateNumber>935</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
-    <column id="290" parent="269" name="stat_block_hash">
+    <column id="291" parent="269" name="stat_block_hash">
       <Position>5</Position>
       <StateNumber>935</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
-    <column id="291" parent="269" name="stat_block">
+    <column id="292" parent="269" name="stat_block">
       <Position>6</Position>
-      <StateNumber>935</StateNumber>
-      <StoredType>jsonb|0s</StoredType>
-      <TypeId>3802</TypeId>
+      <StateNumber>946</StateNumber>
+      <StoredType>text|0s</StoredType>
+      <TypeId>25</TypeId>
     </column>
-    <column id="292" parent="269" name="stat_block_message_id">
+    <column id="293" parent="269" name="stat_block_message_id">
       <Position>7</Position>
       <StateNumber>935</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
-    <column id="293" parent="269" name="stat_block_channel_id">
+    <column id="294" parent="269" name="stat_block_channel_id">
       <Position>8</Position>
       <StateNumber>935</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
-    <column id="294" parent="269" name="spell_block_channel_id">
+    <column id="295" parent="269" name="spell_block_channel_id">
       <Position>9</Position>
       <StateNumber>935</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
-    <column id="295" parent="269" name="spell_block_message_id">
+    <column id="296" parent="269" name="spell_block_message_id">
       <Position>10</Position>
       <StateNumber>935</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
-    <column id="296" parent="269" name="spell_block">
+    <column id="297" parent="269" name="spell_block">
       <Position>11</Position>
       <StateNumber>935</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
-    <column id="297" parent="269" name="spell_block_hash">
+    <column id="298" parent="269" name="spell_block_hash">
       <Position>12</Position>
       <StateNumber>935</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
-    <column id="298" parent="269" name="mana">
+    <column id="299" parent="269" name="mana">
       <Position>13</Position>
       <StateNumber>935</StateNumber>
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
-    <column id="299" parent="269" name="mana_readout_channel_id">
+    <column id="300" parent="269" name="mana_readout_channel_id">
       <Position>14</Position>
       <StateNumber>935</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
-    <column id="300" parent="269" name="mana_readout_message_id">
+    <column id="301" parent="269" name="mana_readout_message_id">
       <Position>15</Position>
       <StateNumber>935</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
-    <column id="301" parent="269" name="saved_rolls">
+    <column id="302" parent="269" name="saved_rolls">
       <Position>16</Position>
       <StateNumber>935</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
-    <column id="302" parent="269" name="stat_block_server_id">
+    <column id="303" parent="269" name="stat_block_server_id">
       <Position>17</Position>
       <StateNumber>935</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
-    <index id="303" parent="269" name="new_characters_pkey">
+    <index id="304" parent="269" name="new_characters_pkey">
       <ColNames>id</ColNames>
       <ObjectId>17097</ObjectId>
       <Primary>1</Primary>
-      <StateNumber>935</StateNumber>
+      <StateNumber>946</StateNumber>
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <key id="304" parent="269" name="new_characters_pkey">
+    <key id="305" parent="269" name="new_characters_pkey">
       <ObjectId>17098</ObjectId>
       <Primary>1</Primary>
       <StateNumber>935</StateNumber>
       <UnderlyingIndexId>17097</UnderlyingIndexId>
     </key>
-    <column id="305" parent="270" name="id">
+    <column id="306" parent="270" name="id">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StateNumber>935</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
-    <column id="306" parent="270" name="default_roll_channel">
+    <column id="307" parent="270" name="default_roll_channel">
       <Position>2</Position>
       <StateNumber>935</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
-    <column id="307" parent="270" name="default_roll_server">
+    <column id="308" parent="270" name="default_roll_server">
       <Position>3</Position>
       <StateNumber>935</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
-    <index id="308" parent="270" name="servers_pkey">
+    <index id="309" parent="270" name="servers_pkey">
       <ColNames>id</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>17104</ObjectId>
@@ -5125,70 +5133,70 @@ false posix/Zulu
       <CollationIds>100</CollationIds>
       <CollationParentNames>pg_catalog</CollationParentNames>
     </index>
-    <key id="309" parent="270" name="servers_pkey">
+    <key id="310" parent="270" name="servers_pkey">
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>17105</ObjectId>
       <Primary>1</Primary>
       <StateNumber>935</StateNumber>
       <UnderlyingIndexId>17104</UnderlyingIndexId>
     </key>
-    <column id="310" parent="271" name="id">
+    <column id="311" parent="271" name="id">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StateNumber>935</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
-    <column id="311" parent="271" name="username">
+    <column id="312" parent="271" name="username">
       <Position>2</Position>
       <StateNumber>935</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
-    <column id="312" parent="271" name="count">
+    <column id="313" parent="271" name="count">
       <DefaultExpression>0</DefaultExpression>
       <Position>3</Position>
       <StateNumber>935</StateNumber>
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
-    <column id="313" parent="271" name="stat_block_hash">
+    <column id="314" parent="271" name="stat_block_hash">
       <Position>4</Position>
       <StateNumber>935</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
-    <column id="314" parent="271" name="stat_block">
+    <column id="315" parent="271" name="stat_block">
       <Position>5</Position>
       <StateNumber>935</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
-    <column id="315" parent="271" name="stat_block_message_id">
+    <column id="316" parent="271" name="stat_block_message_id">
       <Position>6</Position>
       <StateNumber>935</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
-    <column id="316" parent="271" name="stat_block_channel_id">
+    <column id="317" parent="271" name="stat_block_channel_id">
       <Position>7</Position>
       <StateNumber>935</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
-    <column id="317" parent="271" name="selected_character_id">
+    <column id="318" parent="271" name="selected_character_id">
       <Position>8</Position>
       <StateNumber>935</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
-    <column id="318" parent="271" name="selected_character">
+    <column id="319" parent="271" name="selected_character">
       <Position>9</Position>
       <StateNumber>935</StateNumber>
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
-    <index id="319" parent="271" name="users_pkey">
+    <index id="320" parent="271" name="users_pkey">
       <ColNames>id</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>17112</ObjectId>
@@ -5200,7 +5208,7 @@ false posix/Zulu
       <CollationIds>100</CollationIds>
       <CollationParentNames>pg_catalog</CollationParentNames>
     </index>
-    <key id="320" parent="271" name="users_pkey">
+    <key id="321" parent="271" name="users_pkey">
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>17113</ObjectId>
       <Primary>1</Primary>
