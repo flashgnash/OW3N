@@ -30,12 +30,13 @@ namespace Ordis.Migrations
                     mana_readout_channel_id = table.Column<string>(type: "text", nullable: true),
                     mana_readout_message_id = table.Column<string>(type: "text", nullable: true),
                     saved_rolls = table.Column<string>(type: "text", nullable: true),
-                    stat_block_server_id = table.Column<string>(type: "text", nullable: true)
+                    stat_block_server_id = table.Column<string>(type: "text", nullable: true),
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("new_characters_pkey", x => x.id);
-                });
+                }
+            );
 
             migrationBuilder.CreateTable(
                 name: "servers",
@@ -43,12 +44,13 @@ namespace Ordis.Migrations
                 {
                     id = table.Column<string>(type: "text", nullable: false),
                     default_roll_channel = table.Column<string>(type: "text", nullable: true),
-                    default_roll_server = table.Column<string>(type: "text", nullable: true)
+                    default_roll_server = table.Column<string>(type: "text", nullable: true),
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("servers_pkey", x => x.id);
-                });
+                }
+            );
 
             migrationBuilder.CreateTable(
                 name: "users",
@@ -62,25 +64,23 @@ namespace Ordis.Migrations
                     stat_block_message_id = table.Column<string>(type: "text", nullable: true),
                     stat_block_channel_id = table.Column<string>(type: "text", nullable: true),
                     selected_character_id = table.Column<string>(type: "text", nullable: true),
-                    selected_character = table.Column<int>(type: "integer", nullable: true)
+                    selected_character = table.Column<int>(type: "integer", nullable: true),
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("users_pkey", x => x.id);
-                });
+                }
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "characters");
+            migrationBuilder.DropTable(name: "characters");
 
-            migrationBuilder.DropTable(
-                name: "servers");
+            migrationBuilder.DropTable(name: "servers");
 
-            migrationBuilder.DropTable(
-                name: "users");
+            migrationBuilder.DropTable(name: "users");
         }
     }
 }

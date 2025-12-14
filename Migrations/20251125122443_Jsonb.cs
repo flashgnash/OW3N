@@ -11,13 +11,14 @@ namespace Ordis.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-
-                migrationBuilder.Sql(@"
+            migrationBuilder.Sql(
+                @"
                     ALTER TABLE characters
                     ALTER COLUMN stat_block
                     SET DATA TYPE jsonb
                     USING stat_block::jsonb;
-                ");
+                "
+            );
 
             migrationBuilder.AlterColumn<JsonDocument>(
                 name: "stat_block",
@@ -26,8 +27,8 @@ namespace Ordis.Migrations
                 nullable: true,
                 oldClrType: typeof(string),
                 oldType: "text",
-                oldNullable: true);
-
+                oldNullable: true
+            );
         }
 
         /// <inheritdoc />
@@ -40,7 +41,8 @@ namespace Ordis.Migrations
                 nullable: true,
                 oldClrType: typeof(JsonDocument),
                 oldType: "jsonb",
-                oldNullable: true);
+                oldNullable: true
+            );
         }
     }
 }

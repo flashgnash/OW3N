@@ -2,10 +2,8 @@ using Microsoft.EntityFrameworkCore;
 
 public class PlayerCharacterService(IDbContextFactory<OrdisContext> dbFactory)
 {
-
     public async Task UpdateGaugeAsync(Gauge gauge)
     {
-
         Console.WriteLine($"Update gauge {gauge.Id}");
         using var db = await dbFactory.CreateDbContextAsync();
 
@@ -13,11 +11,12 @@ public class PlayerCharacterService(IDbContextFactory<OrdisContext> dbFactory)
 
         if (old == null)
             db.Gauges.Add(gauge);
-        else {
-            old.Name  = gauge.Name;
+        else
+        {
+            old.Name = gauge.Name;
             old.Value = gauge.Value;
-            old.Max   = gauge.Max;
-            old.Icon  = gauge.Icon;
+            old.Max = gauge.Max;
+            old.Icon = gauge.Icon;
         }
 
         await db.SaveChangesAsync();
@@ -37,38 +36,34 @@ public class PlayerCharacterService(IDbContextFactory<OrdisContext> dbFactory)
         Console.WriteLine("4");
     }
 
-// public async Task CreateOrUpdateAsync(Gauge gauge)
-// {
-//     await using var db = await dbFactory.CreateDbContextAsync();
+    // public async Task CreateOrUpdateAsync(Gauge gauge)
+    // {
+    //     await using var db = await dbFactory.CreateDbContextAsync();
 
-//     Console.WriteLine($"pre-find {gauge.Id}");
+    //     Console.WriteLine($"pre-find {gauge.Id}");
 
-    
-//     var existing = await db.Gauges.FindAsync(gauge.Id);
+    //     var existing = await db.Gauges.FindAsync(gauge.Id);
 
-//     Console.WriteLine($"post-find {gauge.Id}");
-//     if (existing != null)
-//     {
-//         existing.Value = gauge.Value;
-//         existing.Max = gauge.Max;
-//         existing.Icon = gauge.Icon;
-//         existing.Name = gauge.Name;
-//     }
-//     else
-//     {
-//         gauge.Id = Guid.NewGuid(); // make new ID
-//         Console.WriteLine(gauge.Id);
-//         await db.Gauges.AddAsync(gauge);
-//     }
+    //     Console.WriteLine($"post-find {gauge.Id}");
+    //     if (existing != null)
+    //     {
+    //         existing.Value = gauge.Value;
+    //         existing.Max = gauge.Max;
+    //         existing.Icon = gauge.Icon;
+    //         existing.Name = gauge.Name;
+    //     }
+    //     else
+    //     {
+    //         gauge.Id = Guid.NewGuid(); // make new ID
+    //         Console.WriteLine(gauge.Id);
+    //         await db.Gauges.AddAsync(gauge);
+    //     }
 
-//     await db.SaveChangesAsync();
-// }
-
-
+    //     await db.SaveChangesAsync();
+    // }
 
     public async Task<PlayerCharacter?> GetByIdAsync(int id)
     {
-
         await using var db = await dbFactory.CreateDbContextAsync();
 
         return await db.Characters.Include(g => g.Gauges).SingleOrDefaultAsync(c => c.Id == id);
@@ -76,11 +71,11 @@ public class PlayerCharacterService(IDbContextFactory<OrdisContext> dbFactory)
 
     public async Task<IEnumerable<PlayerCharacter>> GetByDiscordIdAsync(string discordId)
     {
-
         await using var db = await dbFactory.CreateDbContextAsync();
 
-        return await db.Characters.Include(g => g.Gauges)
-                 .Where(c => c.UserId == discordId)
-                 .ToListAsync();
+        return await db
+            .Characters.Include(g => g.Gauges)
+            .Where(c => c.UserId == discordId)
+            .ToListAsync();
     }
 }

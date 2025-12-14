@@ -40,7 +40,7 @@ namespace Ordis.Migrations
                     Name = table.Column<string>(type: "text", nullable: false),
                     Value = table.Column<int>(type: "integer", nullable: false),
                     Max = table.Column<int>(type: "integer", nullable: false),
-                    PlayerCharacterId = table.Column<int>(type: "integer", nullable: true)
+                    PlayerCharacterId = table.Column<int>(type: "integer", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -49,20 +49,22 @@ namespace Ordis.Migrations
                         name: "FK_Gauge_characters_PlayerCharacterId",
                         column: x => x.PlayerCharacterId,
                         principalTable: "characters",
-                        principalColumn: "id");
-                });
+                        principalColumn: "id"
+                    );
+                }
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_Gauge_PlayerCharacterId",
                 table: "Gauge",
-                column: "PlayerCharacterId");
+                column: "PlayerCharacterId"
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Gauge");
+            migrationBuilder.DropTable(name: "Gauge");
 
             // migrationBuilder.RenameColumn(
             //     name: "StatBlockMessageId",

@@ -1,3 +1,1 @@
-public class InvalidRollException : Exception{
-	
-}
+public class InvalidRollException : Exception { }

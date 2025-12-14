@@ -7,11 +7,10 @@ using Microsoft.Extensions.Configuration;
 
 public class DiscordService(IConfiguration config, HttpClient http)
 {
-
-	// This is very bad but is only a temporary measure to get up and running.
-	// Still undecided on how best to get the webhook URI
-	// Also, might not bother with this method at all ikn the long run and just have the bot send the
-	// message with CachedHttp, but rust is being a pain so I'd like to avoid that for now
+    // This is very bad but is only a temporary measure to get up and running.
+    // Still undecided on how best to get the webhook URI
+    // Also, might not bother with this method at all ikn the long run and just have the bot send the
+    // message with CachedHttp, but rust is being a pain so I'd like to avoid that for now
     public async Task SendMessageAsync(string message)
     {
         var payload = JsonSerializer.Serialize(new { content = message });
@@ -19,24 +18,24 @@ public class DiscordService(IConfiguration config, HttpClient http)
         await http.PostAsync(config["DiscordWebhookUrl"], content);
     }
 
-
-	private string ColorHexFromString(string input)
-	{
-	    using var md5 = MD5.Create();
-	    var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(input));
-	    return $"#{hash[0]:X2}{hash[1]:X2}{hash[2]:X2}";
-	}
-
+    private string ColorHexFromString(string input)
+    {
+        using var md5 = MD5.Create();
+        var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(input));
+        return $"#{hash[0]:X2}{hash[1]:X2}{hash[2]:X2}";
+    }
 
     public async Task SendEmbedAsync(string title, string description, string? colorHex = null)
     {
-
-		colorHex = colorHex ?? ColorHexFromString(title);
+        colorHex = colorHex ?? ColorHexFromString(title);
         var embed = new
         {
             title,
             description,
-            color = int.Parse(colorHex.Replace("#", ""), System.Globalization.NumberStyles.HexNumber)
+            color = int.Parse(
+                colorHex.Replace("#", ""),
+                System.Globalization.NumberStyles.HexNumber
+            ),
         };
 
         var payload = new { embeds = new[] { embed } };
@@ -45,5 +44,4 @@ public class DiscordService(IConfiguration config, HttpClient http)
 
         await http.PostAsync(config["DiscordWebhookUrl"], content);
     }
-	
 }

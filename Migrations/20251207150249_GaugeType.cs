@@ -15,15 +15,14 @@ namespace Ordis.Migrations
                 table: "Gauges",
                 type: "integer",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 0
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "GaugeType",
-                table: "Gauges");
+            migrationBuilder.DropColumn(name: "GaugeType", table: "Gauges");
         }
     }
 }
