@@ -1,34 +1,37 @@
-<div class="m-auto" style="display: inline-flex; gap: 0.1em;">
-    @for (int i = 0; i < IconsWide; i++)
-    {
-        double segment = GaugeInstance.Max / IconsWide;
-        double remaining = (GaugeInstance.Value - i * segment) / segment;
-        remaining = Math.Max(0, Math.Min(1, remaining));
-        double rounded = Math.Round(remaining * 2) / 2;
 
-        <span style="position: relative; width: 1em; height: 1em; display: inline-block; font-size:2em">
-            @if (rounded >= 1)
-            {
-                <span style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: inline-block;">@Icon</span>
-            }
-            else if (rounded == 0.5)
-            {
-                <span style="position: relative; width: 100%; height: 100%; display: inline-block;">
-                    <!-- background faded -->
-                    <span style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.2;">@Icon</span>
-                    <!-- foreground half -->
+<div class="m-auto">
+  <h5 class="m-auto w-100 text-center">@GaugeInstance.Value / @GaugeInstance.Max</h5>
+  <div class="m-auto" style="display: inline-flex; gap: 0.1em; height: 100%">
+      @for (int i = 0; i < IconsWide; i++)
+      {
+          double segment = GaugeInstance.Max / IconsWide;
+          double remaining = (GaugeInstance.Value - i * segment) / segment;
+          remaining = Math.Max(0, Math.Min(1, remaining));
+          double rounded = Math.Round(remaining * 2) / 2;
 
-                    <span style="position: absolute; top: 0; left: 0; width: 60%; height: 100%; overflow: hidden;">@Icon</span>
-                </span>
-            }
-            else
-            {
-                <span style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: inline-block; opacity: 0.2;">@Icon</span>
-            }
-        </span>
-    }
+          <span style="position: relative; width: 1em; height: 1em; display: inline-block; font-size:2em">
+              @if (rounded >= 1)
+              {
+                  <span style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: inline-block;">@Icon</span>
+              }
+              else if (rounded == 0.5)
+              {
+                  <span style="position: relative; width: 100%; height: 100%; display: inline-block;">
+                      <!-- background faded -->
+                      <span style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.2;">@Icon</span>
+                      <!-- foreground half -->
+
+                      <span style="position: absolute; top: 0; left: 0; width: 60%; height: 200%; overflow: hidden;">@Icon</span>
+                  </span>
+              }
+              else
+              {
+                  <span style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: inline-block; opacity: 0.2;">@Icon</span>
+              }
+          </span>
+      }
+  </div>
 </div>
-
 @code {
     [Parameter] public Gauge GaugeInstance { get; set; }
     [Parameter] public int IconsWide { get; set; } = 10;
