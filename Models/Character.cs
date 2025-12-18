@@ -1,11 +1,13 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
 
-public partial class PlayerCharacter
+public class PlayerCharacter
 {
     public int Id { get; set; }
     public string? UserId { get; set; }
     public string? Name { get; set; }
+
+    public Campaign? Campaign { get; set; }
 
     public string? RollServerId { get; set; }
 

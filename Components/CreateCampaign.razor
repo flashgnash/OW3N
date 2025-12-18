@@ -1,0 +1,73 @@
+@rendermode InteractiveServer
+@inject AuthenticationStateProvider AuthStateProvider
+@inject CampaignService CampaignService
+
+<div class="form">
+	<div class="form-group">
+		<label class="form-label">Name</label> 
+		<input class="form-control" @bind="Campaign.Name"/>
+	</div>
+
+	<div class="form-group d-flex flex-wrap bg-dark m-2 rounded">
+		<div class="d-flex w-100 flex-row flex-nowrap">
+			<label class="form-label flex-shrink-1 m-2">@Campaign.Players?.Count() Character(s)</label>
+			<div class="flex-grow-1"></div>
+			 <a class="btn btn-primary flex-shrink-1 w-25" @onclick="AddCharacter">+</a>
+		</div>
+		@if(Campaign.Players != null) {
+			
+			@foreach (PlayerCharacter character in Campaign.Players) {
+				<div class="form-group w-100" @key="character">
+					<label class="form-label">Name</label>
+					<input class="form-control" @bind="character.Name"/>
+
+					<label class="form-label">Discord ID</label>
+					<input class="form-control" @bind="character.UserId"/>				</div>
+			}
+		}
+
+		
+
+	</div>
+
+		<a class="btn btn-primary form-control w-100" @onclick="SaveAsync">Create</a>
+</div>
+
+@code {
+
+	public Campaign Campaign {get; set;}
+
+	public async Task SaveAsync() {
+
+		await CampaignService.UpdateAsync(Campaign);
+		Console.WriteLine($"Created/updated campaign {Campaign.Id}: {Campaign.Name} owned by {Campaign.DungeonMasterId}");
+	}
+
+	public void AddCharacter() {
+		Campaign.Players.Add(new());
+
+		Console.WriteLine($"Add character {Campaign.Players.Count()}");
+	}
+
+    protected async override Task OnInitializedAsync(){
+
+
+
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        var discordId = user.FindFirst("discord_id")?.Value ?? "Not logged in";
+
+
+		Campaign = new();
+
+		Campaign.DungeonMasterId = discordId; 
+
+		if(Campaign.Players == null)
+			Campaign.Players = new List<PlayerCharacter>();
+		
+		
+
+	}
+	
+}

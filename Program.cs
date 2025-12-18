@@ -39,6 +39,7 @@ builder.Services.AddDbContextFactory<OrdisContext>(
 );
 
 builder.Services.AddScoped<PlayerCharacterService>();
+builder.Services.AddScoped<CampaignService>();
 
 builder.Services.AddScoped<UserState>();
 

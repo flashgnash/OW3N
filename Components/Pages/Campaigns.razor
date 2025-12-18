@@ -1,0 +1,88 @@
+@page "/dm/campaigns"
+@inject CampaignService CampaignService 
+@inject AuthenticationStateProvider AuthStateProvider
+
+
+<Modal Title="Create Campaign" id="createCampaignDialog">
+    <div class=p-3>
+		<CreateCampaign/>
+    </div>
+</Modal>
+
+<div class="d-flex m-1">
+	@if(OwnedCampaigns != null && OwnedCampaigns.Count() > 0){
+		<div class="m-auto w-100">
+	
+		<div class="w-100 m-2 d-flex flex-nowrap">
+			<h2 class="m-2 text=center flex-grow-1">Your Campaigns</h2>
+
+	        <a onClick="createCampaignDialog.showModal()" class="btn btn-primary rounded-3 d-flex d-flex align-items-center justify-content-center">+</a>
+		</div>
+		@foreach (Campaign campaign in OwnedCampaigns) {
+
+			<div class="card">
+				<div class="card-header"> @campaign.Name</div>
+				<div class="card-body w-100 d-flex flex-row align-items-center justify-items-center">
+					<ul class="m-auto">
+						@if(campaign.Players != null && campaign.Players.Count() > 0 ){
+							<span>Players:</span>
+							@foreach (PlayerCharacter player in campaign.Players) {
+								<li>@player.Name</li>
+							}
+						}
+					</ul>
+					@if(campaign.DefaultRollDie != null || campaign.StatModifierFormula != null) {
+						<div class="m-auto">
+							@if(campaign.DefaultRollDie != null) {
+								<span>Default Roll: @campaign.DefaultRollDie</span>
+							}
+							<br>
+
+							@if(campaign.StatModifierFormula != null){
+								<span>Modifier Formula: @campaign.StatModifierFormula</span>
+							}
+						</div>
+					}
+				</div>
+			</div>
+	
+		}
+		</div>
+	}
+	else{
+		<div class="w-100 vh-100 d-flex">
+
+			<div class="m-auto">
+					<div class="m-auto w-50">
+						<img class="w-100" src="https://a.pinatafarm.com/574x1002/6ed072a130/no-maidens.jpg" alt="no campaigns?"/>
+					</div>
+
+					<h1 class="text-center">No campaigns?</h1>
+
+	                <a onClick="createCampaignDialog.showModal()" class="w-50 btn btn-primary p-2 m-auto rounded-3 d-flex justify-content-center">Create one?</a>
+			
+			</div>
+
+		</div>
+	}
+
+@code {
+
+	IEnumerable<Campaign>? OwnedCampaigns {get; set;}
+
+    protected async override Task OnInitializedAsync(){
+
+
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        var discordId = user.FindFirst("discord_id")?.Value ?? "Not logged in";
+
+
+		
+		OwnedCampaigns = await CampaignService.GetByDiscordIdAsync(discordId); 
+
+	}
+	
+}
+</div>

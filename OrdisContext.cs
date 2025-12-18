@@ -13,6 +13,8 @@ public partial class OrdisContext : DbContext
 
     public virtual DbSet<Server> Servers { get; set; }
 
+    public virtual DbSet<Campaign> Campaigns { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
