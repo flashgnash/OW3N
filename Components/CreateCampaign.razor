@@ -2,17 +2,26 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @inject CampaignService CampaignService
 
-<div class="form">
-	<div class="form-group">
-		<label class="form-label">Name</label> 
-		<input class="form-control" @bind="Campaign.Name"/>
-	</div>
+<div class="form h-100">
+		<label class="form-label" >Name</label> 
+		<input class="form-control" placeholder="My Awesome Campaign" @bind="Campaign.Name"/>
+		<br>
 
-	<div class="form-group d-flex flex-wrap bg-dark m-2 rounded">
+
+		<span><label class="form-label">Default Dice</label> <span title="The default die to use for rolls (this can include stats, mathematical formulae, etc)" style="cursor: default; user-select: none; color:var(--accent)">?</span></span>
+		<input class="form-control" placeholder="1d20" @bind="Campaign.DefaultRollDie"/>
+		<br>
+
+
+		<span><label class="form-label">Stat modifier formula</label> <span title="Formula to use for stat mods" style="cursor: default; user-select: none; color:var(--accent)">?</span></span>
+		<input class="form-control" placeholder="floor((stat - 10) / 2)" @bind="Campaign.StatModifierFormula"/>		
+		<br>
+
+	<div class="form-group d-flex flex-wrap bg-dark m-2 p-2 rounded" style="overflow: scroll;">
 		<div class="d-flex w-100 flex-row flex-nowrap">
-			<label class="form-label flex-shrink-1 m-2">@Campaign.Players?.Count() Character(s)</label>
+			<label class="form-label flex-shrink-1">@Campaign.Players?.Count() Character(s)</label>
 			<div class="flex-grow-1"></div>
-			 <a class="btn btn-primary flex-shrink-1 w-25" @onclick="AddCharacter">+</a>
+			<a class="btn btn-primary bg-primary h-100 flex-shrink-1 w-25" @onclick="AddCharacter">+</a>
 		</div>
 		@if(Campaign.Players != null) {
 			
@@ -22,7 +31,8 @@
 					<input class="form-control" @bind="character.Name"/>
 
 					<label class="form-label">Discord ID</label>
-					<input class="form-control" @bind="character.UserId"/>				</div>
+					<input class="form-control" @bind="character.UserId"/>
+				</div>
 			}
 		}
 
@@ -30,7 +40,10 @@
 
 	</div>
 
-		<a class="btn btn-primary form-control w-100" @onclick="SaveAsync">Create</a>
+	<div class="flex-grow-1">
+	</div>
+
+	<a class="btn btn-primary form-control w-100" @onclick="SaveAsync">Save</a>
 </div>
 
 @code {
