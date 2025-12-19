@@ -1,0 +1,26 @@
+@typeparam TItem
+
+<div class="form-group d-flex flex-wrap bg-dark m-2 p-2 rounded" style="overflow: auto;">
+    <div class="d-flex w-100 flex-row flex-nowrap">
+        <label class="form-label flex-shrink-1">@Items?.Count() @(Name)(s)</label>
+        <div class="flex-grow-1"></div>
+        <button class="btn btn-primary h-100 flex-shrink-1 w-25" @onclick="AddItem">+</button>
+    </div>
+
+    @if (Items != null)
+    {
+        @foreach (var item in Items)
+        {
+            <div class="form-group w-100" @key="item">
+                @ItemTemplate(item)
+            </div>
+        }
+    }
+</div>
+
+@code {
+    [Parameter] public ICollection<TItem> Items { get; set; }
+    [Parameter] public EventCallback AddItem { get; set; }
+    [Parameter] public RenderFragment<TItem> ItemTemplate { get; set; }
+	[Parameter] public string Name {get; set;}
+}
