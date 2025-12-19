@@ -42,6 +42,14 @@ public partial class OrdisContext : DbContext
             entity.Property(e => e.StatBlockMessageId).HasColumnName("stat_block_message_id");
             entity.Property(e => e.StatBlockServerId).HasColumnName("stat_block_server_id");
             entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.HasOne(e => e.Campaign).WithMany(e => e.Players).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Campaign>(entity =>
+        {
+            entity.HasMany(e => e.Players).WithOne(e => e.Campaign).OnDelete(DeleteBehavior.Cascade);
+                
         });
 
         modelBuilder.Entity<Server>(entity =>

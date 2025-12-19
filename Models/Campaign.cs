@@ -6,7 +6,7 @@ public class Campaign
     public User? DungeonMaster { get; set; }
     public string? DungeonMasterId {get; set;}
 
-    public ICollection<PlayerCharacter> Players { get; set; }
+    public ICollection<PlayerCharacter>? Players { get; set; }
 
     public string? DefaultRollDie { get; set; }
     public string? StatModifierFormula { get; set; }
