@@ -1,11 +1,16 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
 
-public partial class PlayerCharacter
+public class PlayerCharacter
 {
+
+    [Key]
     public int Id { get; set; }
     public string? UserId { get; set; }
     public string? Name { get; set; }
+
+    public Campaign? Campaign { get; set; }
 
     public string? RollServerId { get; set; }
 
@@ -42,62 +47,21 @@ public partial class PlayerCharacter
         };
 
     [NotMapped]
-    public int? Level => TryGetInt("level");
-
-    [NotMapped]
     public string? Race { get; set; }
 
     [NotMapped]
-    public List<Stat>? Stats
-    {
-        get
-        {
-            if (
-                StatBlockJson?.RootElement.TryGetProperty("stats", out var stats) == true
-                && stats.ValueKind == JsonValueKind.Object
-            )
-            {
-                var list = new List<Stat>();
-                foreach (var prop in stats.EnumerateObject())
-                {
-                    if (
-                        prop.Value.ValueKind == JsonValueKind.Number
-                        && prop.Value.TryGetInt32(out var v)
-                    )
-                        if (v != 0)
-                            list.Add(new Stat { Name = prop.Name, Value = v });
-                }
-                return list;
-            }
-            return null;
-        }
-    }
+    public List<Stat>? Stats =>
+        StatBlock?.Stats?
+            .Where(x => x.Value != 0)
+            .Select(x => new Stat { Name = x.Key, Value = x.Value })
+            .ToList();
 
     [NotMapped]
-    public List<Stat>? SpecialStats
-    {
-        get
-        {
-            if (
-                StatBlockJson?.RootElement.TryGetProperty("special_stats", out var stats) == true
-                && stats.ValueKind == JsonValueKind.Object
-            )
-            {
-                var list = new List<Stat>();
-                foreach (var prop in stats.EnumerateObject())
-                {
-                    if (
-                        prop.Value.ValueKind == JsonValueKind.Number
-                        && prop.Value.TryGetInt32(out var v)
-                    )
-                        if (v != 0)
-                            list.Add(new Stat { Name = prop.Name, Value = v });
-                }
-                return list;
-            }
-            return null;
-        }
-    }
+    public List<Stat>? SpecialStats =>
+        StatBlock?.SpecialStats?
+            .Where(x => x.Value != 0)
+            .Select(x => new Stat { Name = x.Key, Value = x.Value })
+            .ToList();
 
     [NotMapped]
     public IEnumerable<Status>? Statuses { get; set; }
@@ -106,9 +70,27 @@ public partial class PlayerCharacter
 
     // public string? StatBlockHash { get; set; }
     [Column("stat_block")]
-    public string? StatBlock { get; set; }
-    public JsonDocument? StatBlockJson =>
-        string.IsNullOrEmpty(StatBlock) ? null : JsonDocument.Parse(StatBlock);
+    public string? StatBlockJson { get; set; }
+
+    [NotMapped]
+    private StatBlock? _statBlock;
+
+    [NotMapped]
+    public StatBlock? StatBlock
+    {
+        get
+        {
+            if (_statBlock == null && !string.IsNullOrEmpty(StatBlockJson))
+                _statBlock = JsonSerializer.Deserialize<StatBlock>(StatBlockJson);
+
+            return _statBlock;
+        }
+        set
+        {
+            _statBlock = value;
+            StatBlockJson = value == null ? null : JsonSerializer.Serialize(value);
+        }
+    }   
 
     public string? StatBlockHash { get; set; }
     public string? StatBlockMessageId { get; set; }
@@ -155,41 +137,7 @@ public partial class PlayerCharacter
     //     }
     // }
 
-    int? TryGetInt(string prop)
-    {
-        if (
-            StatBlockJson?.RootElement.TryGetProperty(prop, out var p) == true
-            && p.ValueKind == JsonValueKind.Number
-            && p.TryGetInt32(out var v)
-        )
-            return v;
-        return null;
-    }
 
-    string? TryGetString(string prop)
-    {
-        if (
-            StatBlockJson?.RootElement.TryGetProperty(prop, out var p) == true
-            && p.ValueKind == JsonValueKind.String
-        )
-            return p.GetString();
-        return null;
-    }
-
-    public int? Hunger => TryGetInt("hunger");
-    public string? DefaultRoll => TryGetString("default_roll");
-    public string? ModifierFormula => TryGetString("modifier_formula");
-    public int? Actions => TryGetInt("actions");
-    public int? Reactions => TryGetInt("reactions");
-    public int? Speed => TryGetInt("speed");
-    public int? MaxArmour => TryGetInt("armour");
-    public int? CurrentArmour => TryGetInt("current_armour");
-    public int? MaxSoul => TryGetInt("soul");
-    public int? CurrentSoul => TryGetInt("current_soul");
-    public int? MaxHealth => TryGetInt("hp");
-    public int? CurrentHealth => TryGetInt("current_hp");
-    public int? HealthRegen => TryGetInt("hpr");
-    public int? EnergyPool => TryGetInt("energy_pool");
 
     // public string? StatBlockServerId { get; set; }
 }

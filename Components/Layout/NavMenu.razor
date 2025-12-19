@@ -2,7 +2,7 @@
 @inject NavigationManager Navigation
 @inject AuthenticationStateProvider AuthStateProvider
 @inject PlayerCharacterService CharService
-
+@inject CampaignService CampaignService
 
 <div class="top-row navbar navbar-dark">
     <div class="container-fluid">
@@ -24,9 +24,25 @@
             <!-- </div> -->
 
 @if(loggedIn) {
+
+
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/campaigns">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> My Campaigns                </NavLink>
+                
+                    @if(Characters != null){
+
+                        @foreach(var campaign in Campaigns){
+                          <NavLink class="nav-link" style="width: 95%" href="@($"/campaigns/{campaign.Id}")">@campaign.Name</NavLink>
+                        }
+
+                    }
+            </div>
+            <br>
+
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="characters">
-                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Characters
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> My Characters
                 </NavLink>
                 @if(Characters != null){
 
@@ -36,7 +52,8 @@
 
                 }
                 
-            </div>
+            </div>            
+            
 }
 
 else {
@@ -64,6 +81,7 @@ else {
 
 
     IEnumerable<PlayerCharacter> Characters {get; set;}
+    IEnumerable<Campaign> Campaigns {get; set;}
 
     protected async override Task OnInitializedAsync()
     {
@@ -90,6 +108,7 @@ else {
 
         if(discordId != null){
           Characters = (await CharService?.GetByDiscordIdAsync(discordId)).Reverse();
+          Campaigns = (await CampaignService?.GetByDiscordIdAsync(discordId)).Reverse();
         }
 
             

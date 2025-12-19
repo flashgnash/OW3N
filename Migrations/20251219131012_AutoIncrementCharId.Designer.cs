@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Ordis.Migrations
 {
     [DbContext(typeof(OrdisContext))]
-    partial class OrdisContextModelSnapshot : ModelSnapshot
+    [Migration("20251219131012_AutoIncrementCharId")]
+    partial class AutoIncrementCharId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -84,11 +87,8 @@ namespace Ordis.Migrations
             modelBuilder.Entity("PlayerCharacter", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CampaignId")
                         .HasColumnType("integer");
@@ -249,8 +249,7 @@ namespace Ordis.Migrations
                 {
                     b.HasOne("Campaign", "Campaign")
                         .WithMany("Players")
-                        .HasForeignKey("CampaignId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("CampaignId");
 
                     b.Navigation("Campaign");
                 });

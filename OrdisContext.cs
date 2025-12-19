@@ -13,6 +13,8 @@ public partial class OrdisContext : DbContext
 
     public virtual DbSet<Server> Servers { get; set; }
 
+    public virtual DbSet<Campaign> Campaigns { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -23,7 +25,7 @@ public partial class OrdisContext : DbContext
 
             entity.ToTable("characters");
 
-            entity.Property(e => e.Id).ValueGeneratedNever().HasColumnName("id");
+            entity.Property(e => e.Id).ValueGeneratedOnAdd().HasColumnName("id");
 
             entity.Property(e => e.Mana).HasColumnName("mana");
             entity.Property(e => e.ManaReadoutChannelId).HasColumnName("mana_readout_channel_id");
@@ -40,6 +42,14 @@ public partial class OrdisContext : DbContext
             entity.Property(e => e.StatBlockMessageId).HasColumnName("stat_block_message_id");
             entity.Property(e => e.StatBlockServerId).HasColumnName("stat_block_server_id");
             entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.HasOne(e => e.Campaign).WithMany(e => e.Players).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Campaign>(entity =>
+        {
+            entity.HasMany(e => e.Players).WithOne(e => e.Campaign).OnDelete(DeleteBehavior.Cascade);
+                
         });
 
         modelBuilder.Entity<Server>(entity =>

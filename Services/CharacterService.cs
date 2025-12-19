@@ -24,16 +24,23 @@ public class PlayerCharacterService(IDbContextFactory<OrdisContext> dbFactory)
 
     public async Task UpdateAsync(PlayerCharacter c)
     {
-        Console.WriteLine("1");
         var db = await dbFactory.CreateDbContextAsync();
 
-        Console.WriteLine("2");
+        c.StatBlock = c.StatBlock;
+
         db.Characters.Update(c);
 
-        Console.WriteLine("3");
         await db.SaveChangesAsync();
+    }
 
-        Console.WriteLine("4");
+
+    public async Task CreateAsync(PlayerCharacter c) {
+        
+        var db = await dbFactory.CreateDbContextAsync();
+
+        await db.Characters.AddAsync(c);
+
+        await db.SaveChangesAsync();
     }
 
     // public async Task CreateOrUpdateAsync(Gauge gauge)

@@ -1,0 +1,76 @@
+@rendermode InteractiveServer
+@inject AuthenticationStateProvider AuthStateProvider
+@inject PlayerCharacterService CharacterService
+
+<div class="form h-100">
+		<label class="form-label" >Name</label> 
+		<input class="form-control" placeholder="My Awesome Character" @bind="Character.Name"/>
+		<br>
+
+		<label class="form-label">Level</label>
+		<input type=number class="form-control" @bind="Character.StatBlock.Level"/>
+		<br>
+
+
+	<ListEditor TItem="Gauge" Items="Character.Gauges" AddItem="AddGauge" Name="Gauge">
+	    <ItemTemplate Context="gauge">
+	        <label class="form-label">Name</label>
+	        <input class="form-control" @bind="gauge.Name"/>
+
+	        <label class="form-label">Maximum</label>
+	        <input class="form-control" @bind="gauge.Max"/>
+	    </ItemTemplate>
+	</ListEditor>
+
+
+	<div class="flex-grow-1">
+	</div>
+
+	<button class="btn btn-primary form-control w-100" @onclick="SaveAsync">Save</button>
+</div>
+
+@code {
+
+	[Parameter]
+	public PlayerCharacter? Character {get; set;}
+
+	public async Task SaveAsync() {
+
+		Console.WriteLine(Character.StatBlock.Level);
+
+		Console.WriteLine(Character.StatBlockJson);
+		await CharacterService.UpdateAsync(Character);
+		Console.WriteLine($"Created/updated character {Character.Id}: {Character.Name}");
+
+	}
+
+	public void AddGauge() {
+		Character.Gauges.Add(new());
+
+		Console.WriteLine($"Add character {Character.Gauges.Count()}");
+	}
+
+    protected async override Task OnInitializedAsync(){
+
+
+
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        var discordId = user.FindFirst("discord_id")?.Value ?? "Not logged in";
+
+		
+
+		Character = Character ?? new();
+
+		if(Character.Gauges == null)
+			Character.Gauges= new List<Gauge>();
+		
+		if(Character.StatBlock == null)
+			Character.StatBlock = new();
+		
+		
+
+	}
+	
+}

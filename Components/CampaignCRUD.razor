@@ -1,0 +1,67 @@
+@rendermode InteractiveServer
+@inject AuthenticationStateProvider AuthStateProvider
+@inject CampaignService CampaignService
+@inject PlayerCharacterService CharacterService
+
+<div class="form h-100">
+    <label class="form-label">Name</label>
+    <input class="form-control" placeholder="My Awesome Campaign" @bind="Campaign.Name"/>
+    <br>
+
+    <span>
+        <label class="form-label">Default Dice</label>
+        <span title="The default die to use for rolls (this can include stats, mathematical formulae, etc)" style="cursor: default; user-select: none; color:var(--accent)">?</span>
+    </span>
+    <input class="form-control" placeholder="1d20" @bind="Campaign.DefaultRollDie"/>
+    <br>
+
+    <span>
+        <label class="form-label">Stat modifier formula</label>
+        <span title="Formula to use for stat mods" style="cursor: default; user-select: none; color:var(--accent)">?</span>
+    </span>
+    <input class="form-control" placeholder="floor((stat - 10) / 2)" @bind="Campaign.StatModifierFormula"/>		
+    <br>
+
+    <ListEditor TItem="PlayerCharacter" Items="Campaign.Players" AddItem="AddCharacter" Name="character">
+        <ItemTemplate Context="player">
+            <label class="form-label">Name</label>
+            <input class="form-control" @bind="player.Name"/>
+
+            <label class="form-label">Discord ID</label>
+            <input class="form-control" @bind="player.UserId"/>
+        </ItemTemplate>
+    </ListEditor>
+
+    <div class="flex-grow-1"></div>
+
+    <button class="btn btn-primary form-control w-100" @onclick="SaveAsync">Save</button>
+</div>
+
+@code {
+    [Parameter]
+    public Campaign Campaign { get; set; } = new Campaign();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        var discordId = user.FindFirst("discord_id")?.Value ?? "Not logged in";
+        Campaign.DungeonMasterId = discordId;
+
+        if (Campaign.Players == null)
+            Campaign.Players = new List<PlayerCharacter>();
+    }
+
+    void AddCharacter()
+    {
+        Campaign.Players.Add(new PlayerCharacter());
+        Console.WriteLine($"Added character, total now: {Campaign.Players.Count}");
+    }
+
+    async Task SaveAsync()
+    {
+        await CampaignService.UpdateAsync(Campaign);
+        Console.WriteLine($"Saved campaign {Campaign.Id}: {Campaign.Name}, owned by {Campaign.DungeonMasterId}");
+    }
+}

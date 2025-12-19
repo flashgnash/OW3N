@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Ordis.Migrations
 {
     [DbContext(typeof(OrdisContext))]
-    partial class OrdisContextModelSnapshot : ModelSnapshot
+    [Migration("20251219132337_PlayersLooselyCoupledFromCampaigns")]
+    partial class PlayersLooselyCoupledFromCampaigns
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -249,8 +252,7 @@ namespace Ordis.Migrations
                 {
                     b.HasOne("Campaign", "Campaign")
                         .WithMany("Players")
-                        .HasForeignKey("CampaignId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("CampaignId");
 
                     b.Navigation("Campaign");
                 });

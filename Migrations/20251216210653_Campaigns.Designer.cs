@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Ordis.Migrations
 {
     [DbContext(typeof(OrdisContext))]
-    partial class OrdisContextModelSnapshot : ModelSnapshot
+    [Migration("20251216210653_Campaigns")]
+    partial class Campaigns
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,17 +32,11 @@ namespace Ordis.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("DefaultRollDie")
-                        .HasColumnType("text");
-
                     b.Property<string>("DungeonMasterId")
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("StatModifierFormula")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -84,11 +81,8 @@ namespace Ordis.Migrations
             modelBuilder.Entity("PlayerCharacter", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CampaignId")
                         .HasColumnType("integer");
@@ -133,6 +127,10 @@ namespace Ordis.Migrations
                         .HasColumnType("text")
                         .HasColumnName("spell_block_message_id");
 
+                    b.Property<string>("StatBlock")
+                        .HasColumnType("text")
+                        .HasColumnName("stat_block");
+
                     b.Property<string>("StatBlockChannelId")
                         .HasColumnType("text")
                         .HasColumnName("stat_block_channel_id");
@@ -140,10 +138,6 @@ namespace Ordis.Migrations
                     b.Property<string>("StatBlockHash")
                         .HasColumnType("text")
                         .HasColumnName("stat_block_hash");
-
-                    b.Property<string>("StatBlockJson")
-                        .HasColumnType("text")
-                        .HasColumnName("stat_block");
 
                     b.Property<string>("StatBlockMessageId")
                         .HasColumnType("text")
@@ -249,8 +243,7 @@ namespace Ordis.Migrations
                 {
                     b.HasOne("Campaign", "Campaign")
                         .WithMany("Players")
-                        .HasForeignKey("CampaignId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("CampaignId");
 
                     b.Navigation("Campaign");
                 });
