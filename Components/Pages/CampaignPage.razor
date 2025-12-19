@@ -9,7 +9,7 @@
 @if(Campaign != null) {
 
 
-    <div class="disable-dbl-tap-zoom container mt-4 vh-100" style="overflow: scroll">
+    <div class="disable-dbl-tap-zoom container mt-4 vh-100" style="overflow: auto">
         <div class="w-100 p-2 d-flex">
             <div class="d-flex flex-row w-100">
                 <div class="flex-grow-1">
@@ -22,21 +22,23 @@
 		<div class="p-2">
 			@if(Campaign.Players != null){
 				<h4>Players</h4>
-				@foreach(PlayerCharacter player in Campaign.Players) {
-					<div class="card">
-						<div class="card-header"> 
-							@player.Name
-						</div>
-						<div class="card-body">
-							@if(player.Gauges != null) {
+				<div class="d-flex flex-wrap">
+					@foreach(PlayerCharacter player in Campaign.Players) {
+						<div class="card">
+							<div class="card-header"> 
+								@player.Name
+							</div>
+							<div class="card-body">
+								@if(player.Gauges != null) {
 								
-								@foreach(Gauge gauge in player.Gauges) {
-			                        <GaugeDisplay GaugeInstance="@gauge" ChangedCallback="@GaugeChangedCallback"   />
+									@foreach(Gauge gauge in player.Gauges) {
+				                        <GaugeDisplay GaugeInstance="@gauge" ChangedCallback="@GaugeChangedCallback"   />
+									}
 								}
-							}
-						</div>
-					</div>								
-				}
+							</div>
+						</div>								
+					}
+				</div>
 
 			}
 		</div>
