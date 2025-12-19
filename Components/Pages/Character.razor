@@ -23,7 +23,7 @@
                         @Char.Name
                     </span>
                     <div>
-                        Level @Char.Level
+                        Level @Char.StatBlock?.Level
                     </div>
                 </div>
 
@@ -65,17 +65,17 @@
         }
         <div class="">
             <div class="flex-grow-2 flex-row flex-wrap">
-                @if (Char?.Hunger != null && Char?.Hunger != 0)
+                @if (Char?.StatBlock?.Hunger != null && Char?.StatBlock?.Hunger != 0)
                 {
                     <div class="card flex-fill">
                         <div class="card-header">Hunger:</div>
                         <div class="card-body fs-7">
                             <span>
-                                @Char.Hunger / 10
+                                @Char.StatBlock?.Hunger / 10
                             </span>
                             <br />
                             <span class="d-none d-md-inline">
-                                <CharBar Repeat="@(Char.Hunger ?? 10)" Icon="🍖" />
+                                <CharBar Repeat="@(Char.StatBlock?.Hunger ?? 10)" Icon="🍖" />
                             </span>
                         </div>
                     </div>
@@ -147,14 +147,14 @@ else
             Char = character;
 
 
-            if (character.Gauges?.Count == 0 && character.MaxHealth != null)
+            if (character.Gauges?.Count == 0 && character.StatBlock?.MaxHealth != null)
             {
                 var newGauge = new Gauge {
                     Id = Guid.NewGuid(),
                     PlayerCharacterId = Char.Id,
                     Name = "Health",
-                    Max = character.MaxHealth ?? 0,
-                    Value = character.CurrentHealth ?? character.MaxHealth ?? 0,
+                    Max = character.StatBlock?.MaxHealth ?? 0,
+                    Value = character.StatBlock?.CurrentHealth ?? character.StatBlock?.MaxHealth ?? 0,
                 };
         
                 character.Gauges.Add(newGauge);

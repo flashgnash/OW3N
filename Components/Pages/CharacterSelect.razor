@@ -25,7 +25,7 @@
             <a class="d-block text-reset text-decoration-none" href="characters/@character.Id">
               <div class="card-header">
                 <span> @character.Name </span>
-                <span class="float-right">Level @character.Level </span>
+                <span class="float-right">Level @character.StatBlock?.Level </span>
               </div>
 
 
@@ -36,7 +36,7 @@
                   }
               </div>
 
-              @if(character.MaxHealth != null) {
+              @if(character.StatBlock?.MaxHealth != null) {
 
                 <!-- <div class="float-right d-flex flex-wrap flex-shrink-1"> -->
                   <!-- <Orb Colour="red" Value="@(character.CurrentHealth ?? character.MaxHealth ?? 0)" Max="@(character.MaxHealth ?? 0)"/> -->
