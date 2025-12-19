@@ -6,7 +6,7 @@
 
 <Modal Title="Create Campaign" id="createCampaignDialog">
     <div class=p-3>
-		<CreateCampaign/>
+		<CampaignCRUD/>
     </div>
 </Modal>
 
@@ -41,6 +41,12 @@
 						
 				    Delete
 				</button>	
+			</Modal>
+
+			<Modal Title="Edit Campaign" id="@(GetCampaignIdentifier(campaign,"edit"))">
+			    <div class=p-3>
+					<CampaignCRUD Campaign="@campaign"/>
+			    </div>
 			</Modal>
 
 
@@ -131,7 +137,8 @@
 	Dictionary<int,string>? NameDeletionConfirmationBoxes {get; set;}
 
 	private string GetCampaignIdentifier(Campaign campaign, string modalType) {
-		return string.Concat(campaign.Name.Replace(' ','_').Where(c => !char.IsWhiteSpace(c)))+modalType;
+	    var clean = new string(campaign.Name.Where(char.IsLetter).ToArray());
+	    return clean + modalType;
 	}
 
     protected async override Task OnInitializedAsync(){

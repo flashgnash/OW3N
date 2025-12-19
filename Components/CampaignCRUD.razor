@@ -1,6 +1,7 @@
 @rendermode InteractiveServer
 @inject AuthenticationStateProvider AuthStateProvider
 @inject CampaignService CampaignService
+@inject PlayerCharacterService CharacterService
 
 <div class="form h-100">
 		<label class="form-label" >Name</label> 
@@ -48,10 +49,10 @@
 
 @code {
 
-	public Campaign Campaign {get; set;}
+	[Parameter]
+	public Campaign? Campaign {get; set;}
 
 	public async Task SaveAsync() {
-
 		await CampaignService.UpdateAsync(Campaign);
 		Console.WriteLine($"Created/updated campaign {Campaign.Id}: {Campaign.Name} owned by {Campaign.DungeonMasterId}");
 	}
@@ -72,7 +73,7 @@
         var discordId = user.FindFirst("discord_id")?.Value ?? "Not logged in";
 
 
-		Campaign = new();
+		Campaign = Campaign ?? new();
 
 		Campaign.DungeonMasterId = discordId; 
 

@@ -25,7 +25,7 @@ public partial class OrdisContext : DbContext
 
             entity.ToTable("characters");
 
-            entity.Property(e => e.Id).ValueGeneratedNever().HasColumnName("id");
+            entity.Property(e => e.Id).ValueGeneratedOnAdd().HasColumnName("id");
 
             entity.Property(e => e.Mana).HasColumnName("mana");
             entity.Property(e => e.ManaReadoutChannelId).HasColumnName("mana_readout_channel_id");
