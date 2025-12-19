@@ -1,0 +1,89 @@
+@page "/campaigns/{campaignId:int}"
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+@inject CampaignService CampaignService
+@inject PlayerCharacterService CharService
+@attribute [Authorize(Policy = "HasDiscordId")]
+
+
+@if(Campaign != null) {
+
+
+    <div class="disable-dbl-tap-zoom container mt-4 vh-100" style="overflow: scroll">
+        <div class="w-100 p-2 d-flex">
+            <div class="d-flex flex-row w-100">
+                <div class="flex-grow-1">
+                    <span class="fs-2">
+                        @Campaign.Name
+                    </span>
+				</div>
+			</div>
+		</div>
+		<div class="p-2">
+			@if(Campaign.Players != null){
+				<h4>Players</h4>
+				@foreach(PlayerCharacter player in Campaign.Players) {
+					<div class="card">
+						<div class="card-header"> 
+							@player.Name
+						</div>
+						<div class="card-body">
+							@if(player.Gauges != null) {
+								
+								@foreach(Gauge gauge in player.Gauges) {
+			                        <GaugeDisplay GaugeInstance="@gauge" ChangedCallback="@GaugeChangedCallback"   />
+								}
+							}
+						</div>
+					</div>								
+				}
+
+			}
+		</div>
+	</div>
+
+
+}
+
+@code {
+	Campaign? Campaign;
+    [Parameter] public int CampaignId { get; set; }
+
+    public async Task GaugeChangedCallback(Gauge gauge)
+    {
+        if (gauge.Id == Guid.Empty)
+            gauge.Id = Guid.NewGuid();
+
+
+        <!-- Console.WriteLine($"Gauges: {Char.Gauges.Count()}"); -->
+
+
+        <!-- await CharService.UpdateGaugeAsync(gauge); -->
+        await CharService.UpdateGaugeAsync(gauge);
+        <!-- Console.WriteLine($"Gauges: {Char.Gauges.Count()}"); -->
+        
+    }
+
+	protected async override Task OnInitializedAsync()
+    {
+
+        var campaign = await CampaignService.GetByIdAsync(CampaignId);
+
+
+
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        var discordId = user.FindFirst("discord_id")?.Value ?? "Not logged in";
+
+        if (true )
+        {
+            Campaign = campaign;
+            
+        }
+        else
+        {
+            Navigation.NavigateTo("/forbidden");
+        }
+    }
+}
