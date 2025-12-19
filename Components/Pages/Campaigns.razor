@@ -1,22 +1,13 @@
-@page "/dm/campaigns"
+@rendermode InteractiveServer
+@page "/campaigns"
 @inject CampaignService CampaignService 
 @inject AuthenticationStateProvider AuthStateProvider
-
+@inject NavigationManager Nav
 
 <Modal Title="Create Campaign" id="createCampaignDialog">
     <div class=p-3>
 		<CreateCampaign/>
     </div>
-</Modal>
-
-<Modal Title="Delete Campaign" id="deleteCampaignDialog">
-
-	<img class="w-100" src="https://media.tenor.com/TfL0yYeaGB4AAAAM/are-you-sure-invincible.gif">
-<div class="d-flex w-100 m-auto ">
-<button class="btn btn-danger w-100 h-100 fs-3">No,<br> don't delete my campaign</button>
-<button class="btn btn-primary w-100 h-100 fs-3">Yes,<br> delete my campaign</button>
-</div>
-	
 </Modal>
 
 <div class="d-flex m-1">
@@ -30,25 +21,60 @@
 		</div>
 		@foreach (Campaign campaign in OwnedCampaigns) {
 
+			<Modal Title="Delete Campaign" id="@(GetCampaignIdentifier(campaign,"delete"))">
+	
+				<h2>Do you really want to delete your campaign "@campaign.Name"?</h2>
+
+				<br>
+			
+				<div class="form-group">
+					<h5 class="text-muted">Please type the name of your campaign to confirm:</h5>
+
+					<input class="form-input fs-5 m-2" placeholder=@campaign.Name @bind="@NameDeletionConfirmationBoxes[campaign.Id]">
+				</div>
+
+	
+				<button class="btn btn-danger w-100"
+				        disabled="@(NameDeletionConfirmationBoxes[campaign.Id] != campaign.Name)"
+						@onclick="async () => await DeleteCampaignAsync(campaign.Id)"
+				>
+						
+				    Delete
+				</button>	
+			</Modal>
+
+
 			<div class="card m-2">
 				<div class="card-header fs-3 d-flex">
-					<div class="m-2">@campaign.Name</div>
-					<div class="flex-grow-1"></div>
 					<div class="m-2">
+						<a href=google.com class="text-decoration-none text-reset">
+						@campaign.Name
+						</a>
+					</div>
+
+					<a class="flex-grow-1" href=google.com/>
+
+					
+					<button class="m-2 text-white" onClick="@(GetCampaignIdentifier(campaign,"edit")).showModal()">
 						 <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
 						  <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
 						</svg>
-					</div>
-					<a onClick="deleteCampaignDialog.showModal()">
-					<div class="m-2 text-danger">
-						<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
-						  <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
-						</svg>
-					</div>
-					</a>
+					</button>
+
+
+					
+					<button onClick="@(GetCampaignIdentifier(campaign,"delete")).showModal()">
+						<div class="m-2 text-danger">
+							<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+							  <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
+							</svg>
+						</div>
+					</button>
 					
 				</div>
-				<div class="card-body w-100 d-flex flex-row align-items-center justify-items-center">
+
+				
+				<a href="@("/campaigns/"+@campaign.Id)" class="card-body w-100 d-flex flex-row align-items-center justify-items-center text-decoration-none">
 					<ul class="m-auto">
 						@if(campaign.Players != null && campaign.Players.Count() > 0 ){
 							<span>Players:</span>
@@ -69,8 +95,9 @@
 							}
 						</div>
 					}
+
+					</a>
 				</div>
-			</div>
 	
 		}
 		</div>
@@ -96,7 +123,20 @@
 
 	IEnumerable<Campaign>? OwnedCampaigns {get; set;}
 
+	async Task DeleteCampaignAsync(int id) {
+		await CampaignService.DeleteAsync(id);
+		Nav.NavigateTo(Nav.Uri,forceLoad:true);
+	}
+
+	Dictionary<int,string>? NameDeletionConfirmationBoxes {get; set;}
+
+	private string GetCampaignIdentifier(Campaign campaign, string modalType) {
+		return string.Concat(campaign.Name.Replace(' ','_').Where(c => !char.IsWhiteSpace(c)))+modalType;
+	}
+
     protected async override Task OnInitializedAsync(){
+
+		NameDeletionConfirmationBoxes = new();
 
 
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
@@ -107,6 +147,13 @@
 
 		
 		OwnedCampaigns = await CampaignService.GetByDiscordIdAsync(discordId); 
+		if(OwnedCampaigns != null ) {
+			
+			foreach(Campaign campaign in OwnedCampaigns ) {
+				NameDeletionConfirmationBoxes[campaign.Id] = "";
+			}
+		}
+
 
 	}
 	

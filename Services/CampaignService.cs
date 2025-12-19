@@ -12,6 +12,14 @@ public class CampaignService(IDbContextFactory<OrdisContext> dbFactory)
         await db.SaveChangesAsync();
 
     }
+    public async Task DeleteAsync(int campaignId) {
+        var db = await dbFactory.CreateDbContextAsync();
+
+        db.Campaigns.Remove(new Campaign(){Id = campaignId});
+
+        await db.SaveChangesAsync();
+        
+    }
 
     public async Task<Campaign?> GetByIdAsync(int id)
     {

@@ -86,7 +86,6 @@ html, body {
     z-index: 99999;
 
     width: 80%;
-    height: 80%;
 
     padding: 0;
     border: 0;
@@ -109,8 +108,8 @@ html, body {
 
 
 button {
-  background-color: var(--bg-light);
-  color: var(--text-colour);
+  background-color: unset;
+  /* color: var(--text-colour); */
   border: 0;
 }
 
@@ -162,7 +161,7 @@ button {
   margin: 5px;
   padding: 0;
   table-layout: fixed;
-  overflow: scroll;
+  overflow: auto;
 }
 
 .float-right {

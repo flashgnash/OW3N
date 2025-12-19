@@ -17,11 +17,11 @@
 		<input class="form-control" placeholder="floor((stat - 10) / 2)" @bind="Campaign.StatModifierFormula"/>		
 		<br>
 
-	<div class="form-group d-flex flex-wrap bg-dark m-2 p-2 rounded" style="overflow: scroll;">
+	<div class="form-group d-flex flex-wrap bg-dark m-2 p-2 rounded" style="overflow: auto;">
 		<div class="d-flex w-100 flex-row flex-nowrap">
 			<label class="form-label flex-shrink-1">@Campaign.Players?.Count() Character(s)</label>
 			<div class="flex-grow-1"></div>
-			<a class="btn btn-primary bg-primary h-100 flex-shrink-1 w-25" @onclick="AddCharacter">+</a>
+			<button class="btn btn-primary bg-primary h-100 flex-shrink-1 w-25" @onclick="AddCharacter">+</button>
 		</div>
 		@if(Campaign.Players != null) {
 			
@@ -43,7 +43,7 @@
 	<div class="flex-grow-1">
 	</div>
 
-	<a class="btn btn-primary form-control w-100" @onclick="SaveAsync">Save</a>
+	<button class="btn btn-primary form-control w-100" @onclick="SaveAsync">Save</button>
 </div>
 
 @code {
