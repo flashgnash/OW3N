@@ -73,17 +73,24 @@ public class PlayerCharacter
     public string? StatBlockJson { get; set; }
 
     [NotMapped]
+    private StatBlock? _statBlock;
+
+    [NotMapped]
     public StatBlock? StatBlock
     {
-        get => string.IsNullOrEmpty(StatBlockJson)
-            ? null
-            : JsonSerializer.Deserialize<StatBlock>(StatBlockJson);
+        get
+        {
+            if (_statBlock == null && !string.IsNullOrEmpty(StatBlockJson))
+                _statBlock = JsonSerializer.Deserialize<StatBlock>(StatBlockJson);
 
-        set => StatBlockJson = value == null
-            ? null
-            : JsonSerializer.Serialize(value);
-    }
-    
+            return _statBlock;
+        }
+        set
+        {
+            _statBlock = value;
+            StatBlockJson = value == null ? null : JsonSerializer.Serialize(value);
+        }
+    }   
 
     public string? StatBlockHash { get; set; }
     public string? StatBlockMessageId { get; set; }

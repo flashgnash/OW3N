@@ -26,6 +26,8 @@ public class PlayerCharacterService(IDbContextFactory<OrdisContext> dbFactory)
     {
         var db = await dbFactory.CreateDbContextAsync();
 
+        c.StatBlock = c.StatBlock;
+
         db.Characters.Update(c);
 
         await db.SaveChangesAsync();

@@ -7,34 +7,21 @@
 		<input class="form-control" placeholder="My Awesome Character" @bind="Character.Name"/>
 		<br>
 
-
-		<span><label class="form-label">Default Dice</label> <span title="The default die to use for rolls (this can include stats, mathematical formulae, etc)" style="cursor: default; user-select: none; color:var(--accent)">?</span></span>
-		<input class="form-control" placeholder="1d20" @bind="Character.Name"/>
+		<label class="form-label">Level</label>
+		<input type=number class="form-control" @bind="Character.StatBlock.Level"/>
 		<br>
 
 
-	<div class="form-group d-flex flex-wrap bg-dark m-2 p-2 rounded" style="overflow: auto;">
-		<div class="d-flex w-100 flex-row flex-nowrap">
-			<label class="form-label flex-shrink-1">@Character.Gauges?.Count() Gauge(s)</label>
-			<div class="flex-grow-1"></div>
-			<button class="btn btn-primary bg-primary h-100 flex-shrink-1 w-25" @onclick="AddGauge">+</button>
-		</div>
-		@if(Character.Gauges!= null) {
-			
-			@foreach (Gauge gauge in Character.Gauges) {
-				<div class="form-group w-100" @key="gauge">
-					<label class="form-label">Name</label>
-					<input class="form-control" @bind="gauge.Name"/>
+	<ListEditor TItem="Gauge" Items="Character.Gauges" AddItem="AddGauge" Name="Gauge">
+	    <ItemTemplate Context="gauge">
+	        <label class="form-label">Name</label>
+	        <input class="form-control" @bind="gauge.Name"/>
 
-					<label class="form-label">Maximum</label>
-					<input class="form-control" @bind="gauge.Max"/>
-				</div>
-			}
-		}
+	        <label class="form-label">Maximum</label>
+	        <input class="form-control" @bind="gauge.Max"/>
+	    </ItemTemplate>
+	</ListEditor>
 
-		
-
-	</div>
 
 	<div class="flex-grow-1">
 	</div>
@@ -48,8 +35,13 @@
 	public PlayerCharacter? Character {get; set;}
 
 	public async Task SaveAsync() {
+
+		Console.WriteLine(Character.StatBlock.Level);
+
+		Console.WriteLine(Character.StatBlockJson);
 		await CharacterService.UpdateAsync(Character);
 		Console.WriteLine($"Created/updated character {Character.Id}: {Character.Name}");
+
 	}
 
 	public void AddGauge() {
@@ -67,11 +59,15 @@
 
         var discordId = user.FindFirst("discord_id")?.Value ?? "Not logged in";
 
+		
 
 		Character = Character ?? new();
 
 		if(Character.Gauges == null)
 			Character.Gauges= new List<Gauge>();
+		
+		if(Character.StatBlock == null)
+			Character.StatBlock = new();
 		
 		
 

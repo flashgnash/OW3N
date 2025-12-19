@@ -22,7 +22,7 @@
     <input class="form-control" placeholder="floor((stat - 10) / 2)" @bind="Campaign.StatModifierFormula"/>		
     <br>
 
-    <ListEditor TItem="PlayerCharacter" Items="Campaign.Players" AddItem="AddCharacter">
+    <ListEditor TItem="PlayerCharacter" Items="Campaign.Players" AddItem="AddCharacter" Name="character">
         <ItemTemplate Context="player">
             <label class="form-label">Name</label>
             <input class="form-control" @bind="player.Name"/>
