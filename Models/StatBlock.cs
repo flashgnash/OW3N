@@ -48,8 +48,8 @@ public class StatBlock
     public int? EnergyPool { get; set; }
 
     [JsonPropertyName("stats")]
-    public Dictionary<string, int>? Stats { get; set; }
+    public Dictionary<string, int?>? Stats { get; set; }
 
     [JsonPropertyName("special_stats")]
-    public Dictionary<string, int>? SpecialStats { get; set; }
+    public Dictionary<string, int?>? SpecialStats { get; set; }
 }
