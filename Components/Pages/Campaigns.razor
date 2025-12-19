@@ -3,6 +3,7 @@
 @inject CampaignService CampaignService 
 @inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager Nav
+@attribute [Authorize(Policy = "HasDiscordId")]
 
 <Modal Title="Create Campaign" id="createCampaignDialog">
     <div class=p-3>
