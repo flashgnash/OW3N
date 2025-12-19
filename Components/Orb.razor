@@ -1,0 +1,39 @@
+@rendermode InteractiveServer
+@inject ILogger<Orb> Log
+@using Microsoft.AspNetCore.Components
+
+<a class="orb m-auto" style="max-width: 40%">
+
+  <div class="orb-label d-flex flex-wrap">
+  <div class="d-flex flex-row w-100">
+    @GaugeInstance.Name
+  </div >
+
+  <div class="d-flex flex-row m-100 m-auto">
+     <!-- <input style="width: 50px;" value="@GaugeInstance.Value"/> -->
+      <span class="m-auto">@GaugeInstance.Value</span>
+    
+      <span class="m-auto">/</span>
+
+      <span class="m-auto">@GaugeInstance.Max</span>
+  </div>
+  </div>
+
+
+  <div class="orb-liquid" style="@Style">
+  </div>
+</a>
+
+
+
+@code {
+
+  [Parameter]
+  public Gauge GaugeInstance { get; set; }
+
+  private float Percentage => ((float)GaugeInstance.Value / (float)GaugeInstance.Max)*100;
+
+
+  private string Style => $"height:{Percentage}%; --orb-colour:{GaugeInstance.Colour}";
+
+}

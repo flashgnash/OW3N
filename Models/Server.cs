@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-
 public partial class Server
 {
     public string Id { get; set; } = null!;

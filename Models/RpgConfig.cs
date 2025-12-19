@@ -1,4 +1,3 @@
-
 public class RpgConfig
 {
     public Dictionary<string, string> StatusStats { get; set; } = new();

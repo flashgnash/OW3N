@@ -1,50 +1,45 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
 
-
-
 public partial class PlayerCharacter
 {
-
-
     public int Id { get; set; }
     public string? UserId { get; set; }
     public string? Name { get; set; }
 
-
-    public string? RollServerId {get; set;}
-
-    [NotMapped]
-    public IEnumerable<Item> Inventory {get; set; } = new List<Item>() {
-        // new Item() {
-        //     Icon = "🍔",
-        //     Name = "Cheeseburger"
-        // },
-        // new Item() {
-        //     Icon = "⚔️",
-        //     Name = "Sword",
-        //     Rolls = new List<Roll>() {new Roll(){Name = "attack", RollString="1d12+1"} }
-        // }
-        
-    };
-
+    public string? RollServerId { get; set; }
 
     [NotMapped]
-    public IEnumerable<Spell> Spells {get; set; } = new List<Spell>() {
-        // new Spell() {
-        //     Icon = "🧊",
-        //     Name = "Ice Bolt",
-        //     Rolls = new List<Roll>() {new Roll(){Name = "attack", RollString="1d12+1"} }
-            
-        // },
-        // new Spell() {
-        //     Icon = "🔥",
-        //     Name = "Fireball",
-        //     Rolls = new List<Roll>() {new Roll(){Name = "attack", RollString="1d12+1"} }
-        // }
-        
-    };
+    public IEnumerable<Item> Inventory { get; set; } =
+        new List<Item>()
+        {
+            // new Item() {
+            //     Icon = "🍔",
+            //     Name = "Cheeseburger"
+            // },
+            // new Item() {
+            //     Icon = "⚔️",
+            //     Name = "Sword",
+            //     Rolls = new List<Roll>() {new Roll(){Name = "attack", RollString="1d12+1"} }
+            // }
+        };
 
+    [NotMapped]
+    public IEnumerable<Spell> Spells { get; set; } =
+        new List<Spell>()
+        {
+            // new Spell() {
+            //     Icon = "🧊",
+            //     Name = "Ice Bolt",
+            //     Rolls = new List<Roll>() {new Roll(){Name = "attack", RollString="1d12+1"} }
+
+            // },
+            // new Spell() {
+            //     Icon = "🔥",
+            //     Name = "Fireball",
+            //     Rolls = new List<Roll>() {new Roll(){Name = "attack", RollString="1d12+1"} }
+            // }
+        };
 
     [NotMapped]
     public int? Level => TryGetInt("level");
@@ -57,12 +52,18 @@ public partial class PlayerCharacter
     {
         get
         {
-            if (StatBlock?.RootElement.TryGetProperty("stats", out var stats) == true && stats.ValueKind == JsonValueKind.Object)
+            if (
+                StatBlockJson?.RootElement.TryGetProperty("stats", out var stats) == true
+                && stats.ValueKind == JsonValueKind.Object
+            )
             {
                 var list = new List<Stat>();
                 foreach (var prop in stats.EnumerateObject())
                 {
-                    if (prop.Value.ValueKind == JsonValueKind.Number && prop.Value.TryGetInt32(out var v))
+                    if (
+                        prop.Value.ValueKind == JsonValueKind.Number
+                        && prop.Value.TryGetInt32(out var v)
+                    )
                         if (v != 0)
                             list.Add(new Stat { Name = prop.Name, Value = v });
                 }
@@ -72,18 +73,23 @@ public partial class PlayerCharacter
         }
     }
 
-    
     [NotMapped]
     public List<Stat>? SpecialStats
     {
         get
         {
-            if (StatBlock?.RootElement.TryGetProperty("special_stats", out var stats) == true && stats.ValueKind == JsonValueKind.Object)
+            if (
+                StatBlockJson?.RootElement.TryGetProperty("special_stats", out var stats) == true
+                && stats.ValueKind == JsonValueKind.Object
+            )
             {
                 var list = new List<Stat>();
                 foreach (var prop in stats.EnumerateObject())
                 {
-                    if (prop.Value.ValueKind == JsonValueKind.Number && prop.Value.TryGetInt32(out var v))
+                    if (
+                        prop.Value.ValueKind == JsonValueKind.Number
+                        && prop.Value.TryGetInt32(out var v)
+                    )
                         if (v != 0)
                             list.Add(new Stat { Name = prop.Name, Value = v });
                 }
@@ -96,13 +102,19 @@ public partial class PlayerCharacter
     [NotMapped]
     public IEnumerable<Status>? Statuses { get; set; }
 
-    public List<Gauge>? Gauges {get; set;}
+    public ICollection<Gauge>? Gauges { get; set; }
 
     // public string? StatBlockHash { get; set; }
     [Column("stat_block")]
-    public JsonDocument? StatBlock { get; set; }
-    // public string? StatBlockMessageId { get; set; }
-    // public string? StatBlockChannelId { get; set; }
+    public string? StatBlock { get; set; }
+    public JsonDocument? StatBlockJson =>
+        string.IsNullOrEmpty(StatBlock) ? null : JsonDocument.Parse(StatBlock);
+
+    public string? StatBlockHash { get; set; }
+    public string? StatBlockMessageId { get; set; }
+    public string? StatBlockChannelId { get; set; }
+    public string? StatBlockServerId { get; set; }
+
     public string? SpellBlockChannelId { get; set; }
     public string? SpellBlockMessageId { get; set; }
     public string? SpellBlock { get; set; }
@@ -111,8 +123,7 @@ public partial class PlayerCharacter
     public string? ManaReadoutChannelId { get; set; }
     public string? ManaReadoutMessageId { get; set; }
 
-
-    public string? SavedRolls {get; set;}
+    public string? SavedRolls { get; set; }
 
     [NotMapped]
     public Dictionary<string, string>? SavedRollsDict
@@ -146,15 +157,21 @@ public partial class PlayerCharacter
 
     int? TryGetInt(string prop)
     {
-
-        if (StatBlock?.RootElement.TryGetProperty(prop, out var p) == true && p.ValueKind == JsonValueKind.Number && p.TryGetInt32(out var v))
+        if (
+            StatBlockJson?.RootElement.TryGetProperty(prop, out var p) == true
+            && p.ValueKind == JsonValueKind.Number
+            && p.TryGetInt32(out var v)
+        )
             return v;
         return null;
     }
 
     string? TryGetString(string prop)
     {
-        if (StatBlock?.RootElement.TryGetProperty(prop, out var p) == true && p.ValueKind == JsonValueKind.String)
+        if (
+            StatBlockJson?.RootElement.TryGetProperty(prop, out var p) == true
+            && p.ValueKind == JsonValueKind.String
+        )
             return p.GetString();
         return null;
     }
@@ -174,8 +191,5 @@ public partial class PlayerCharacter
     public int? HealthRegen => TryGetInt("hpr");
     public int? EnergyPool => TryGetInt("energy_pool");
 
-
     // public string? StatBlockServerId { get; set; }
-
-    
 }

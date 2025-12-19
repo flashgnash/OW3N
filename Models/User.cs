@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-
 public partial class User
 {
     public string Id { get; set; } = null!;

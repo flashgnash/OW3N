@@ -1,23 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>151de71c-4b1f-4cc9-a67b-f4718bdcef49</UserSecretsId>
 
-  <AssemblyName>Ordis</AssemblyName>
-  <RootNamespace>Ordis</RootNamespace>
+    <AssemblyName>Ordis</AssemblyName>
+    <RootNamespace>Ordis</RootNamespace>
 
-<RazorCompileOnBuild>true</RazorCompileOnBuild>
-<RazorCompileOnPublish>true</RazorCompileOnPublish>
-<EnableDefaultScopedCssItems>true</EnableDefaultScopedCssItems>
-
-    
+    <RazorCompileOnBuild>true</RazorCompileOnBuild>
+    <RazorCompileOnPublish>true</RazorCompileOnPublish>
+    <EnableDefaultScopedCssItems>true</EnableDefaultScopedCssItems>
   </PropertyGroup>
 
-  <ItemGroup>
-  </ItemGroup>
+  <ItemGroup></ItemGroup>
 
   <Target Name="NpmInstall" BeforeTargets="CompileSass">
     <!-- Install node modules (bootstrap) -->
@@ -25,9 +21,11 @@
   </Target>
 
   <Target Name="CompileSass" BeforeTargets="ComputeStaticWebAssetManifest;BeforeBuild">
-    <Exec Command="sass --load-path=node_modules sass/app.scss wwwroot/app.css" ContinueOnError="False" />
+    <Exec
+      Command="sass --load-path=node_modules sass/app.scss wwwroot/app.css"
+      ContinueOnError="False"
+    />
   </Target>
-
 
   <ItemGroup>
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
@@ -39,8 +37,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="9" />
     <PackageReference Include="Npgsql" Version="9.0.4" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9" />
   </ItemGroup>
-
 </Project>

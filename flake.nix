@@ -16,6 +16,7 @@
       let
         pkgs = import nixpkgs {
           inherit system;
+          config.allowUnfree = true;
         };
 
         dotnetPkg = pkgs.dotnetCorePackages.sdk_9_0;
@@ -24,6 +25,8 @@
         devShell = pkgs.mkShell {
           buildInputs = with pkgs; [
             zlib
+
+            jetbrains.datagrip
 
             zlib.dev
             openssl

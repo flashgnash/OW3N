@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 
-public struct IndividualRollResult {
+public struct IndividualRollResult
+{
     [JsonPropertyName("result")]
     public float Result { get; set; }
 
@@ -8,7 +9,8 @@ public struct IndividualRollResult {
     public string Expression { get; set; }
 }
 
-public struct RollResult {
+public struct RollResult
+{
     [JsonPropertyName("rolls")]
     public IEnumerable<IndividualRollResult> Rolls { get; set; }
 

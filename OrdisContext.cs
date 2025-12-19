@@ -1,23 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+
 public partial class OrdisContext : DbContext
 {
-
-
     public OrdisContext(DbContextOptions<OrdisContext> options)
-        : base(options)
-    {
-    }
+        : base(options) { }
 
     public virtual DbSet<PlayerCharacter> Characters { get; set; }
 
+    public virtual DbSet<Gauge> Gauges { get; set; }
 
     public virtual DbSet<Server> Servers { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
-    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<PlayerCharacter>(entity =>
@@ -26,9 +23,7 @@ public partial class OrdisContext : DbContext
 
             entity.ToTable("characters");
 
-            entity.Property(e => e.Id)
-                .ValueGeneratedNever()
-                .HasColumnName("id");
+            entity.Property(e => e.Id).ValueGeneratedNever().HasColumnName("id");
 
             entity.Property(e => e.Mana).HasColumnName("mana");
             entity.Property(e => e.ManaReadoutChannelId).HasColumnName("mana_readout_channel_id");
@@ -40,13 +35,12 @@ public partial class OrdisContext : DbContext
             entity.Property(e => e.SpellBlockChannelId).HasColumnName("spell_block_channel_id");
             entity.Property(e => e.SpellBlockHash).HasColumnName("spell_block_hash");
             entity.Property(e => e.SpellBlockMessageId).HasColumnName("spell_block_message_id");
-            // entity.Property(e => e.StatBlockChannelId).HasColumnName("stat_block_channel_id");
-            // entity.Property(e => e.StatBlockHash).HasColumnName("stat_block_hash");
-            // entity.Property(e => e.StatBlockMessageId).HasColumnName("stat_block_message_id");
-            // entity.Property(e => e.StatBlockServerId).HasColumnName("stat_block_server_id");
+            entity.Property(e => e.StatBlockChannelId).HasColumnName("stat_block_channel_id");
+            entity.Property(e => e.StatBlockHash).HasColumnName("stat_block_hash");
+            entity.Property(e => e.StatBlockMessageId).HasColumnName("stat_block_message_id");
+            entity.Property(e => e.StatBlockServerId).HasColumnName("stat_block_server_id");
             entity.Property(e => e.UserId).HasColumnName("user_id");
         });
-
 
         modelBuilder.Entity<Server>(entity =>
         {
@@ -66,9 +60,7 @@ public partial class OrdisContext : DbContext
             entity.ToTable("users");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Count)
-                .HasDefaultValue(0)
-                .HasColumnName("count");
+            entity.Property(e => e.Count).HasDefaultValue(0).HasColumnName("count");
             entity.Property(e => e.SelectedCharacter).HasColumnName("selected_character");
             entity.Property(e => e.SelectedCharacterId).HasColumnName("selected_character_id");
             // entity.Property(e => e.StatBlockChannelId).HasColumnName("stat_block_channel_id");
