@@ -1,3 +1,4 @@
+@rendermode InteractiveServer
 @page "/campaigns/{campaignId:int}"
 @inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager Navigation
@@ -16,32 +17,85 @@
                     <span class="fs-2">
                         @Campaign.Name
                     </span>
-				</div>
-			</div>
+								</div>
+					</div>
 		</div>
-		<div class="p-2">
-			@if(Campaign.Players != null){
-				<h4>Players</h4>
-				<div class="d-flex flex-wrap">
-					@foreach(PlayerCharacter player in Campaign.Players) {
-						<div class="card">
-							<div class="card-header fs-5"> 
-								@player.Name
-							</div>
-							<div class="card-body">
-								@if(player.Gauges != null) {
-								
-									@foreach(Gauge gauge in player.Gauges) {
-				                        <GaugeDisplay GaugeInstance="@gauge" ChangedCallback="@GaugeChangedCallback"   />
-									}
-								}
-							</div>
-						</div>								
-					}
-				</div>
 
-			}
-		</div>
+
+		<div class="p-2 d-flex flex-wrap">
+        <div class="card flex-fill">
+          <div class="card-header w-100 text-center"><h5>Default Roll</h5></div>
+
+          <div class="card-body fs-6">
+          @Campaign.DefaultRollDie
+          </div>
+        </div>
+        <div class="card flex-fill">
+          <div class="card-header w-100 text-center"><h5>Default mod formula</h5></div>
+
+          <div class="card-body fs-6">
+          @(Campaign.StatModifierFormula ?? "5e")
+
+          </div>
+        </div>
+    </div>
+    
+		<div class="p-2 d-flex flex-row">
+      <div class="card flex-grow-1">
+  			@if(Campaign.Players != null){
+        <div>
+          <div class="card-header d-flex flex-row">
+
+  				<h4>Players</h4>
+          <div class="flex-grow-1"></div>
+          <button class="btn btn-primary" @onclick="AddCharacter">+</button>
+          </div>
+  				<div class="d-flex flex-wrap">
+  					@foreach(PlayerCharacter player in Campaign.Players) {
+
+        			<Modal Title="Edit Player" id="@(GetIdentifier(player,"edit"))">
+        			    <div class=p-3>
+        					<CharacterCRUD Character="@player"/>
+        			    </div>
+        			</Modal>
+
+      
+  						<div class="card flex-fill">
+  							<div class="fs-6 card-header bg-light"> 
+  								<div class="text-white fs-5 d-flex">
+                    <div class="m-auto">
+                      @(player.Name ?? "Unnamed Character")
+                    </div>
+                      <div class="flex-grow-1"></div>
+
+
+            					<button class="m-2 text-white" onClick="@(GetIdentifier(player,"edit")).showModal()">
+            						 <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+            						  <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
+            						</svg>
+            					</button>
+                  </div>                    
+  							</div>
+  							<div class="card-body bg-light w-100">
+  								@if(player.Gauges != null) {
+
+								    <div class="d-flex flex-row flex-nowrap">
+    									@foreach(Gauge gauge in player.Gauges) {
+                        <div class="flex-fill w-100">
+                          <GaugeDisplay GaugeInstance="@gauge" ChangedCallback="@GaugeChangedCallback"   />
+                        </div>
+    									}
+                    </div>
+  								}
+  							</div>
+  						</div>								
+  					}
+  				</div>
+        </div>
+
+  			}
+  		</div>
+    </div>
 	</div>
 
 
@@ -66,11 +120,23 @@
         
     }
 
+
+	private string GetIdentifier(Campaign campaign, string modalType) {
+	    var clean = new string(campaign.Name.Where(char.IsLetter).ToArray());
+	    return clean + modalType;
+	}
+	private string GetIdentifier(PlayerCharacter character, string modalType) {
+	    var clean = new string(character.Name?.Where(char.IsLetter).ToArray());
+	    return clean + modalType;
+	}
+    
+
 	protected async override Task OnInitializedAsync()
     {
 
         var campaign = await CampaignService.GetByIdAsync(CampaignId);
 
+        campaign.Players = campaign.Players ?? new List<PlayerCharacter>();
 
 
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
@@ -88,4 +154,21 @@
             Navigation.NavigateTo("/forbidden");
         }
     }
+
+
+    void AddCharacter()
+    {
+        Campaign.Players.Add(new PlayerCharacter(){Campaign = Campaign});
+
+        Console.WriteLine($"Added character, total now: {Campaign.Players.Count}");
+    }
+
+    async Task SaveAsync()
+    {
+        await CampaignService.UpdateAsync(Campaign);
+        Console.WriteLine($"Saved campaign {Campaign.Id}: {Campaign.Name}, owned by {Campaign.DungeonMasterId}");
+    }
+
+
+    
 }
