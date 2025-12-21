@@ -43,6 +43,7 @@ public class Gauge
     public int Value { get; set; }
     public int Max { get; set; }
 
-    public string Colour =>
-        _colourLookup.TryGetValue(Name?.ToLower(), out var colour) ? colour : null;
+    
+    
+    public string Colour {get; set;}
 }
