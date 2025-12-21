@@ -208,6 +208,13 @@ button {
 .orb {
   position: relative;
   width: 100%;
+  height: 100%;
+  flex: 0 0 auto;
+  margin: auto;
+
+  align-self: center;
+  flex-grow: 0;
+  flex-shrink: 0;
   aspect-ratio: 1 / 1; /* keep height same as width */
   border-radius: 50%;
   overflow: hidden;

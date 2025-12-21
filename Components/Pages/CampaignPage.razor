@@ -50,7 +50,7 @@
           <div class="flex-grow-1"></div>
           <button class="btn btn-primary" @onclick="AddCharacter">+</button>
           </div>
-  				<div class="d-flex flex-wrap">
+  				<div class="d-flex flex-wrap align-items-center justify-content-center">
   					@foreach(PlayerCharacter player in Campaign.Players) {
 
         			<Modal Title="Edit Player" id="@(GetIdentifier(player,"edit"))">
@@ -60,11 +60,11 @@
         			</Modal>
 
       
-  						<div class="card flex-fill">
+  						<div class="card flex-fill" style="">
   							<div class="fs-6 card-header bg-light"> 
   								<div class="text-white fs-5 d-flex">
                     <div class="m-auto">
-                      @(player.Name ?? "Unnamed Character")
+                      @(player.Name ?? "Unnamed")
                     </div>
                       <div class="flex-grow-1"></div>
 
@@ -76,12 +76,12 @@
             					</button>
                   </div>                    
   							</div>
-  							<div class="card-body bg-light w-100">
+  							<div class="card-body bg-light w-100 align-items-center">
   								@if(player.Gauges != null) {
 
-								    <div class="d-flex flex-row flex-nowrap">
+								    <div class="d-flex flex-row align-items-center justify-content-center flex-wrap gap-2">
     									@foreach(Gauge gauge in player.Gauges) {
-                        <div class="flex-fill w-100">
+                        <div class="" style="height: 200px; width: 200px;">
                           <GaugeDisplay GaugeInstance="@gauge" ChangedCallback="@GaugeChangedCallback"   />
                         </div>
     									}
