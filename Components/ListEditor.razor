@@ -7,7 +7,7 @@
             <span title="@Hint" class="m-auto fs-5" style="cursor: default; user-select: none; color:var(--accent)">?</span>
         }
         <div class="flex-grow-1"></div>
-        <button class="btn btn-primary bg-primary h-100 flex-shrink-1 p-2" @onclick="AddItem" style="width: 3em; aspect-ratio: 1 / 1 ">+</button>
+        <button type="button" class="btn btn-primary bg-primary h-100 flex-shrink-1 p-2" @onclick="AddItem" style="width: 3em; aspect-ratio: 1 / 1 ">+</button>
     </div>
     <div class="flex-fill flex-wrap d-flex gap-2 m-0" style="overflow: auto;">
     @if (Items != null)

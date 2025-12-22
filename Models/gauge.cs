@@ -39,11 +39,13 @@ public class Gauge
 
     public string? Icon { get; set; }
 
+    [Required]
     public string Name { get; set; }
     public int Value { get; set; }
+    [Required]
     public int Max { get; set; }
 
     
     
-    public string Colour {get; set;}
+    public string? Colour {get; set;}
 }

@@ -2,12 +2,41 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
 
-public class PlayerCharacter
+public class PlayerCharacter : IValidatableObject
 {
+
+
+public IEnumerable<ValidationResult> Validate(ValidationContext ctx)
+{
+    foreach (var g in Gauges)
+    {
+        if (string.IsNullOrWhiteSpace(g.Name))
+        {
+            yield return new ValidationResult(
+                "Gauge name missing",
+                new[] { nameof(Gauges) }
+            );
+        }
+    }
+    if(StatBlock?.Stats != null) {
+        foreach (var s in StatBlock.Stats)
+        {
+            if (string.IsNullOrWhiteSpace(s.Name))
+            {
+                yield return new ValidationResult(
+                    "Stat name missing",
+                    new[] { nameof(StatBlock.Stats) }
+                );
+            }
+        }
+        
+    }
+}
 
     [Key]
     public int Id { get; set; }
     public string? UserId { get; set; }
+
     public string? Name { get; set; }
 
     public Campaign? Campaign { get; set; }
