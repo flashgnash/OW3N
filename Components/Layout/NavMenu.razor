@@ -30,7 +30,7 @@
                 <NavLink class="nav-link" href="/campaigns">
                     <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> My Campaigns                </NavLink>
                 
-                    @if(Characters != null){
+                    @if(Campaigns != null){
 
                         @foreach(var campaign in Campaigns){
                           <NavLink class="nav-link" style="width: 95%" href="@($"/campaigns/{campaign.Id}")">@campaign.Name</NavLink>
