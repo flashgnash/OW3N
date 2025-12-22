@@ -34,7 +34,7 @@ public class CampaignService(IDbContextFactory<OrdisContext> dbFactory)
 
         return await db
             .Campaigns.Include(g => g.Players)
-            .Where(c => c.DungeonMaster.Id == discordId)
+            .Where(c => (c.DungeonMaster != null && c.DungeonMaster.Id == discordId) || (c.Players != null && c.Players.Any(c => c.UserId == discordId)))
             .ToListAsync();
     }
 }

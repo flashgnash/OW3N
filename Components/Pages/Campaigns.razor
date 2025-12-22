@@ -142,25 +142,26 @@
 	    return clean + modalType;
 	}
 
-    protected async override Task OnInitializedAsync(){
+    protected async override Task OnInitializedAsync()
+		{
 
-		NameDeletionConfirmationBoxes = new();
+			NameDeletionConfirmationBoxes = new();
 
 
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
+      var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+      var user = authState.User;
 
-        var discordId = user.FindFirst("discord_id")?.Value ?? "Not logged in";
+      var discordId = user.FindFirst("discord_id")?.Value ?? "Not logged in";
 
 
 		
-		OwnedCampaigns = await CampaignService.GetByDiscordIdAsync(discordId); 
-		if(OwnedCampaigns != null ) {
+			OwnedCampaigns = await CampaignService.GetByDiscordIdAsync(discordId); 
+			if(OwnedCampaigns != null ) {
 			
-			foreach(Campaign campaign in OwnedCampaigns ) {
-				NameDeletionConfirmationBoxes[campaign.Id] = "";
+				foreach(Campaign campaign in OwnedCampaigns ) {
+					NameDeletionConfirmationBoxes[campaign.Id] = "";
+				}
 			}
-		}
 
 
 	}
