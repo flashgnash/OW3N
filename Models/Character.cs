@@ -50,20 +50,6 @@ public class PlayerCharacter
     public string? Race { get; set; }
 
     [NotMapped]
-    public List<Stat>? Stats =>
-        StatBlock?.Stats?
-            .Where(x => x.Value != 0)
-            .Select(x => new Stat { Name = x.Key, Value = x.Value })
-            .ToList();
-
-    [NotMapped]
-    public List<Stat>? SpecialStats =>
-        StatBlock?.SpecialStats?
-            .Where(x => x.Value != 0)
-            .Select(x => new Stat { Name = x.Key, Value = x.Value })
-            .ToList();
-
-    [NotMapped]
     public IEnumerable<Status>? Statuses { get; set; }
 
     public ICollection<Gauge>? Gauges { get; set; }

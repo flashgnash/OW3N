@@ -1,31 +1,75 @@
 @rendermode InteractiveServer
 @inject AuthenticationStateProvider AuthStateProvider
 @inject PlayerCharacterService CharacterService
+@inject IJSRuntime JS
 
 
 <div class="form h-100">
-		<label class="form-label" >Name</label> 
-		<input class="form-control" placeholder="My Awesome Character" @bind="Character.Name"/>
-		<br>
-
-		<label class="form-label">Level</label>
-		<input type=number class="form-control" @bind="Character.StatBlock.Level"/>
-		<br>
 
 
-	<ListEditor TItem="Gauge" Items="Character.Gauges" AddItem="AddGauge" Name="Gauge">
-	    <ItemTemplate Context="gauge">
-	        <label class="form-label">Name</label>
-	        <input class="form-control" @bind="gauge.Name"/>
+  <div class="d-flex flex-nowrap gap-3 m-2">
+      <div class="flex-fill">
+    		<label class="form-label w-100 text-center" >Name</label> 
+    		<input class="form-control" placeholder="My Awesome Character" @bind="Character.Name"/>
+      </div>
+      <div class="flex-fill">
+    
+    		<label class="form-label w-100 text-center">Level</label>
+    		<input type=number class="form-control" @bind="Character.StatBlock.Level"/>
+      </div>
+  </div>
 
-	        <label class="form-label">Maximum</label>
-	        <input class="form-control" @bind="gauge.Max"/>
+  <div class="d-flex flex-nowrap m-0">
+    <div style="max-height: 78vh; overflow: auto;">
+    	<ListEditor TItem="Gauge" Items="Character.Gauges" AddItem="AddGauge" Name="Gauge">
+    	    <ItemTemplate Context="gauge">
+          
+              <input class="form-control text-center gauge-edit-title"
+                     style="background:@gauge.Colour; border: var(--bg-dark)"
+                     @bind="gauge.Name" />
+
+              <hr>
+
+    	        <label class="form-label">Maximum</label>
+    	        <input class="form-control" type="number" @bind="gauge.Max"/>
 
 
-	        <label class="form-label">Colour</label>
-	        <input class="form-control" @bind="gauge.Colour"/>
-	    </ItemTemplate>
-	</ListEditor>
+    	        <label class="form-label">Colour</label>
+              <div class="d-flex flex-row gap-1">
+      	        <input class="form-control" @bind="gauge.Colour"/>
+                <input class="form-control bg-dark form-control-color" type="color" style="border: none" @bind="gauge.Colour" />
+              </div>
+    	    </ItemTemplate>
+    	</ListEditor>
+    </div>
+
+    <div style="max-width:50%; max-height: 78vh; overflow: auto;">
+
+    	<ListEditor TItem="Stat" Items="Character.StatBlock.SpecialStats" AddItem="AddSpecialStat" Name="Special Stat" Hint="Stats whose values get added to rolls directly rather than run through the normal modifier formula">
+    	    <ItemTemplate Context="stat">
+
+            <div class="">
+    	        <input class="form-control text-center" @bind="stat.Name"/>
+              <hr>
+    	        <input class="form-control" type="number" @bind="stat.Value"/>
+            </div>
+
+    	    </ItemTemplate>
+    	</ListEditor>
+
+    	<ListEditor TItem="Stat" Items="Character.StatBlock.Stats" AddItem="AddStat" Name="Stat">
+    	    <ItemTemplate Context="stat">
+
+            <div class="">
+    	        <input class="form-control text-center" @bind="stat.Name"/>
+              <hr>
+    	        <input class="form-control" type="number" @bind="stat.Value"/>
+            </div>
+
+    	    </ItemTemplate>
+    	</ListEditor>
+    </div>
+  </div>
 
 
 	<div class="flex-grow-1">
@@ -52,7 +96,18 @@
 	public void AddGauge() {
 		Character.Gauges.Add(new());
 
-		Console.WriteLine($"Add character {Character.Gauges.Count()}");
+		Console.WriteLine($"Add gauge {Character.Gauges.Count()}");
+	}
+
+	public void AddStat() {
+		Character.StatBlock.Stats.Add(new() {Name = $"unnamed-{Character.StatBlock.Stats.Count()}"});
+
+		Console.WriteLine($"Add stat {Character.StatBlock.Stats.Count()}");
+	}
+	public void AddSpecialStat() {
+		Character.StatBlock.SpecialStats.Add(new() {Name = $"unnamed-{Character.StatBlock.SpecialStats.Count()}"});
+
+		Console.WriteLine($"Add special stat {Character.StatBlock.SpecialStats.Count()}");
 	}
 
     protected async override Task OnInitializedAsync(){
@@ -70,12 +125,29 @@
 
 		if(Character.Gauges == null)
 			Character.Gauges= new List<Gauge>();
-		
+				
 		if(Character.StatBlock == null)
 			Character.StatBlock = new();
-		
+
+		if(Character.StatBlock.Stats == null)
+			Character.StatBlock.Stats = new();		
 		
 
 	}
-	
+
+  protected override async Task OnAfterRenderAsync(bool first)
+  {
+      await JS.InvokeVoidAsync("fixGaugeText");
+  }	
 }
+
+<script>
+function fixGaugeText() {
+  document.querySelectorAll(".gauge-edit-title").forEach(el => {
+    const c = getComputedStyle(el).backgroundColor.match(/\d+/g).map(Number);
+    const L = 0.2126*c[0] + 0.7152*c[1] + 0.0722*c[2];
+    el.style.color = L > 160 ? "black" : "white";
+  });
+}
+</script>
+
