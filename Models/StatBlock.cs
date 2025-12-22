@@ -5,9 +5,9 @@ public class StatListConverter : JsonConverter<List<Stat>>
 {
     public override List<Stat> Read(ref Utf8JsonReader r, Type t, JsonSerializerOptions o)
     {
-        var dict = JsonSerializer.Deserialize<Dictionary<string,int>>(ref r, o);
+        var dict = JsonSerializer.Deserialize<Dictionary<string,int?>>(ref r, o);
         return dict?
-            .Select(k => new Stat { Name = k.Key, Value = k.Value })
+            .Select(k => new Stat { Name = k.Key, Value = k.Value ?? 0 })
             .ToList() ?? new();
     }
 
