@@ -73,7 +73,7 @@ public class PlayerCharacterService(IDbContextFactory<OrdisContext> dbFactory)
     {
         await using var db = await dbFactory.CreateDbContextAsync();
 
-        return await db.Characters.Include(g => g.Gauges).SingleOrDefaultAsync(c => c.Id == id);
+        return await db.Characters.Include(g => g.Gauges).Include(g => g.Campaign).SingleOrDefaultAsync(c => c.Id == id);
     }
 
     public async Task<IEnumerable<PlayerCharacter>> GetByDiscordIdAsync(string discordId)

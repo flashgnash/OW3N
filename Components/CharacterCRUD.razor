@@ -18,6 +18,10 @@
     		<input class="form-control" placeholder="My Awesome Character" @bind="Character.Name"/>
       </div>
       <div class="flex-fill">
+    		<label class="form-label w-100 text-center" >Default Roll</label> 
+    		<input class="form-control" placeholder="@Character?.Campaign?.DefaultRollDie" @bind="Character.StatBlock.DefaultRoll"/>
+      </div>
+      <div class="flex-fill">
     
     		<label class="form-label w-100 text-center">Level</label>
     		<input type=number class="form-control" @bind="Character.StatBlock.Level"/>

@@ -178,7 +178,9 @@
 
     private void ClearRoll()
     {
-        RollText = String.IsNullOrEmpty(Character?.StatBlock?.DefaultRoll) ? "1d100" : Character?.StatBlock?.DefaultRoll;
+        var rollText = String.IsNullOrEmpty(Character?.StatBlock?.DefaultRoll) ? null : Character?.StatBlock?.DefaultRoll;
+		RollText = rollText ?? Character?.Campaign?.DefaultRollDie ?? "1d20";
+
         LastResult = null;
         Advantage = 0;
         if(Character != null ) {
