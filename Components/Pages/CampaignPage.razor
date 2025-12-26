@@ -25,10 +25,11 @@
             <div class="flex-grow-1"></div>
 
             <button class="fs-3 m-auto" onClick="editCampaignDialog.showModal()" style="color:var(--accent)">
-        				 <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
-        					  <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
-        					</svg>
+    			 <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+    				  <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
+    				</svg>
             </button>
+
 					</div>
 		</div>
 
@@ -70,6 +71,30 @@
         			    </div>
         			</Modal>
 
+
+			<Modal Title="Delete Player" id="@(GetIdentifier(player,"delete"))">
+	
+				<h2>Do you really want to delete the character "@player.Name"?</h2>
+
+				<br>
+			
+				<div class="form-group">
+					<h5 class="text-muted">Please type the name of your campaign to confirm:</h5>
+
+					<input class="form-input fs-5 m-2" placeholder=@player.Name @bind="@NameDeletionConfirmationBoxes[player.Id]">
+				</div>
+
+	
+				<button class="btn btn-danger w-100"
+				        disabled="@(NameDeletionConfirmationBoxes[player.Id] != player.Name)"
+						@onclick="async () => await DeletePlayerAsync(player)"
+				>
+						
+				    Delete
+				</button>	
+			</Modal>
+					
+
       
   						<div class="card flex-fill" style="">
   							<div class="fs-6 card-header bg-light"> 
@@ -79,12 +104,20 @@
                     </div>
                       <div class="flex-grow-1"></div>
 
+            					<button class="m-2 text-danger" onClick="@(GetIdentifier(player,"delete")).showModal()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                      <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
+                                    </svg>
+            					</button>
 
-            					<button class="m-2 text-white" onClick="@(GetIdentifier(player,"edit")).showModal()">
+            					<button class="m-2" style="color:var(--accent)" onClick="@(GetIdentifier(player,"edit")).showModal()">
             						 <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
             						  <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
             						</svg>
             					</button>
+
+
+                                
                   </div>                    
   							</div>
   							<div class="card-body bg-light w-100 align-items-center">
@@ -116,6 +149,12 @@
 	Campaign? Campaign;
     [Parameter] public int CampaignId { get; set; }
 
+	Dictionary<int,string>? NameDeletionConfirmationBoxes {get; set;}
+
+	public async Task DeletePlayerAsync(PlayerCharacter character) {
+		await CampaignService.RemovePlayerAsync(Campaign,character);
+	}
+
     public async Task GaugeChangedCallback(Gauge gauge)
     {
         if (gauge.Id == Guid.Empty)
@@ -145,6 +184,8 @@
 	protected async override Task OnInitializedAsync()
     {
 
+			NameDeletionConfirmationBoxes = new();
+
         var campaign = await CampaignService.GetByIdAsync(CampaignId);
 
         campaign.Players = campaign.Players ?? new List<PlayerCharacter>();
@@ -158,6 +199,10 @@
         if (true )
         {
             Campaign = campaign;
+
+			foreach(PlayerCharacter player in Campaign?.Players) {
+				NameDeletionConfirmationBoxes[player.Id] = "";
+			}
             
         }
         else
