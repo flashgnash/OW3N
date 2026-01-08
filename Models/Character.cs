@@ -43,6 +43,8 @@ public IEnumerable<ValidationResult> Validate(ValidationContext ctx)
 
     public string? RollServerId { get; set; }
 
+    public ICollection<RollResult>? Rolls {get; set;}
+
     [NotMapped]
     public IEnumerable<Item> Inventory { get; set; } =
         new List<Item>()

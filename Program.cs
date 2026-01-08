@@ -19,7 +19,6 @@ builder.Services.Configure<Dictionary<string, APIConfig>>(
 
 builder.Services.AddHttpClient();
 
-builder.Services.AddSingleton<RollService>();
 builder.Services.AddSingleton<DiscordService>();
 
 builder.Services.AddDbContextFactory<OrdisContext>((sp, opts) =>

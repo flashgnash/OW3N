@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-public class PlayerCharacterService(IDbContextFactory<OrdisContext> dbFactory)
+public class PlayerCharacterService(IDbContextFactory<OrdisContext> dbFactory, HttpClient httpClient)
 {
     public async Task UpdateGaugeAsync(Gauge gauge)
     {
@@ -21,6 +21,40 @@ public class PlayerCharacterService(IDbContextFactory<OrdisContext> dbFactory)
 
         await db.SaveChangesAsync();
     }
+
+    public async Task<RollResult> RollFor(PlayerCharacter character, String rollFormula)
+    {
+        var response = await httpClient.PostAsync(
+            $"http://localhost:3000/roll/{character.Id}/{rollFormula}",
+            null
+        );
+
+        switch (response.StatusCode)
+        {
+            case System.Net.HttpStatusCode.InternalServerError:
+            case System.Net.HttpStatusCode.BadRequest:
+                throw new InvalidRollException();
+        }
+        var rollResult = await response.Content.ReadFromJsonAsync<RollResult>();
+        
+        await SaveRollAsync(character.Id, rollResult);
+
+        return rollResult;
+    }
+
+    public async Task SaveRollAsync(int id, RollResult rollResult) {
+        
+        using var db = await dbFactory.CreateDbContextAsync();
+
+
+        var character = await db.Characters.FirstOrDefaultAsync(c => c.Id == id) ?? throw new Exception("Not found by that ID");
+        rollResult.Timestamp = rollResult.Timestamp ?? DateTime.UtcNow;
+
+        character.Rolls = character.Rolls ?? new List<RollResult>();
+        character.Rolls.Add(rollResult);
+
+        await db.SaveChangesAsync();
+    } 
 
     public async Task UpdateAsync(PlayerCharacter c)
     {
