@@ -22,6 +22,10 @@
     		<input class="form-control" placeholder="@Character?.Campaign?.DefaultRollDie" @bind="Character.StatBlock.DefaultRoll"/>
       </div>
       <div class="flex-fill">
+    		<label class="form-label w-100 text-center" >Mod Formula</label> 
+    		<input class="form-control" placeholder="@Character?.Campaign?.StatModifierFormula" @bind="Character.StatBlock.ModifierFormula"/>
+      </div>
+      <div class="flex-fill">
     
     		<label class="form-label w-100 text-center">Level</label>
     		<input type=number class="form-control" @bind="Character.StatBlock.Level"/>
