@@ -120,7 +120,13 @@
   							<div class="fs-6 card-header bg-light"> 
   								<div class="text-white fs-5 d-flex">
 				                    <div class="m-auto">
-				                      @(player.Name ?? "Unnamed")
+									@if(player.UserId == DiscordId) {
+				                      <a style="color:var(--accent)" href="@($"/characters/{player.Id}")">@(player.Name ?? "Unknown") (you)</a>
+									}
+									else {
+										
+				                      <span>@(player.Name ?? "Unknown")</span>
+									}
 				                    </div>
 				                    <div class="flex-grow-1"></div>
 
@@ -176,6 +182,8 @@
 
 	Dictionary<int,string>? NameDeletionConfirmationBoxes {get; set;}
 
+	private string DiscordId {get; set;}
+
 	public async Task DeletePlayerAsync(PlayerCharacter character) {
 		await CampaignService.RemovePlayerAsync(Campaign,character);
 	}
@@ -220,6 +228,8 @@
         var user = authState.User;
 
         var discordId = user.FindFirst("discord_id")?.Value ?? "Not logged in";
+
+		DiscordId = discordId;
 
         if (true )
         {
