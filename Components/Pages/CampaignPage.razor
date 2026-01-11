@@ -156,9 +156,11 @@
 
 									<br>
 
-									<h3>
-									Last Roll: @player?.Rolls?.OrderBy(r => r.Timestamp).FirstOrDefault()?.Result
-									</h3>
+									<div class="fs-4 card-footer">
+									<span class="m-auto">
+										Last Roll: @player?.Rolls?.OrderBy(r => r.Timestamp).FirstOrDefault()?.Result
+									</span>
+									</div>
 					
   								}
   							</div>
