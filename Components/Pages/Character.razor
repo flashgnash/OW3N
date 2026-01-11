@@ -121,9 +121,9 @@
                         </span>
                     </div>
                     <div class="flex-fill card-body">
-                        @foreach(RollResult roll in Char.Rolls) {
+                        @foreach(RollResult roll in Char.Rolls.OrderBy(r => r.Timestamp)) {
                            <div>
-                                @roll.Message
+                                @roll.Timestamp?.ToString("HH:mm") : @roll.Result
                             </div> 
                         }
                     </div>
