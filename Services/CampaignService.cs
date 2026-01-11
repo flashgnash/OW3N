@@ -48,7 +48,14 @@ public class CampaignService(IDbContextFactory<OrdisContext> dbFactory)
     {
         await using var db = await dbFactory.CreateDbContextAsync();
 
-        return await db.Campaigns.Include(g => g.Players).ThenInclude(p => p.Gauges).SingleOrDefaultAsync(c => c.Id == id);
+        return await db.Campaigns
+            .Include(g => g.Players)
+                .ThenInclude(p => p.Gauges)
+
+            .Include(g => g.Players)
+                .ThenInclude(p => p.Rolls)
+
+            .SingleOrDefaultAsync(c => c.Id == id);
     }
 
     public async Task<IEnumerable<Campaign>> GetByDiscordIdAsync(string discordId)
