@@ -129,7 +129,7 @@
 		Console.WriteLine($"Add stat {Character.StatBlock.Stats.Count()}");
 	}
 	public void AddSpecialStat() {
-		Character.StatBlock.SpecialStats.Add(new() {Name = $"unnamed-{Character.StatBlock.SpecialStats.Count()}"});
+		Character.StatBlock.SpecialStats.Add(new() {Name = $"unnamed-{Character.StatBlock?.SpecialStats?.Count() ?? 1}"});
 
 		Console.WriteLine($"Add special stat {Character.StatBlock.SpecialStats.Count()}");
 	}
@@ -155,7 +155,9 @@
 
 		if(Character.StatBlock.Stats == null)
 			Character.StatBlock.Stats = new();		
-		
+
+		if(Character.StatBlock.SpecialStats == null)
+			Character.StatBlock.SpecialStats = new();		
 
 	}
 
