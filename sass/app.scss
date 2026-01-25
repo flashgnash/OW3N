@@ -9,7 +9,11 @@ $card-bg: $dark;
 $card-color: $text-colour;
 $card-cap-color: $text-colour;
 
-
+$table-bg: $dark;
+$table-color: $text-colour;
+$table-striped-bg: $light;
+$table-accent-bg: $light;
+$table-border-color: $dark;
 @import "../node_modules/bootstrap/scss/bootstrap";
 
 .text-muted {
