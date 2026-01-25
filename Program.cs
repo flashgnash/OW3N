@@ -71,25 +71,32 @@ builder.Services.AddAuthentication(options =>
     {
         OnCreatingTicket = async ctx =>
         {
-            var req = new HttpRequestMessage(
-                HttpMethod.Get,
-                ctx.Options.UserInformationEndpoint
-            );
-            req.Headers.Authorization =
-                new System.Net.Http.Headers.AuthenticationHeaderValue(
-                    "Bearer",
-                    ctx.AccessToken
-                );
-
+            var req = new HttpRequestMessage(HttpMethod.Get, ctx.Options.UserInformationEndpoint);
+            req.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", ctx.AccessToken);
             var res = await ctx.Backchannel.SendAsync(req);
             var json = JsonDocument.Parse(await res.Content.ReadAsStringAsync());
 
-            ctx.Identity!.AddClaim(
-                new Claim("discord_id", json.RootElement.GetProperty("id").GetString()!)
-            );
-            ctx.Identity.AddClaim(
-                new Claim("discord_name", json.RootElement.GetProperty("username").GetString()!)
-            );
+            var discordId = json.RootElement.GetProperty("id").GetString()!;
+            var discordName = json.RootElement.GetProperty("username").GetString()!;
+
+            ctx.Identity!.AddClaim(new Claim("discord_id", discordId));
+            ctx.Identity.AddClaim(new Claim("discord_name", discordName));
+
+            // Add to DB if not exist
+            using var scope = ctx.HttpContext.RequestServices.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<OrdisContext>();
+
+            var user = await db.Users.FindAsync(discordId);
+            if (user == null)
+            {
+                user = new User
+                {
+                    Id = discordId,
+                    Username = discordName
+                };
+                db.Users.Add(user);
+                await db.SaveChangesAsync();
+            }
         }
     };
 });
