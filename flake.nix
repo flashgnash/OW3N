@@ -86,7 +86,7 @@
 
                 sudo -u postgres psql -v pw="$PW" -f initDb.sql
 
-                echo "connectionstrings__characterdb=\"host=localhost;username=ow3n;password=$PW;database=ow3n\"" >> .env
+                echo "connectionstrings__CharacterDb=\"host=localhost;username=ow3n;password=$PW;database=ow3n\"" >> .env
 
                 updateDatabase
 
