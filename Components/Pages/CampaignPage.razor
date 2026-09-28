@@ -183,6 +183,11 @@
                                     </div>
                                 }
                             </div>
+                            <button class="btn btn-secondary btn-sm flex-shrink-0" @onclick="OpenBatchHpAsync" title="Edit HP">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
+                                </svg>
+                            </button>
                             <button class="btn btn-secondary btn-sm flex-shrink-0" @onclick="OpenBulkEditDialogAsync" title="Edit selected">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
                                     <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
@@ -241,6 +246,13 @@
             </div>
         </div>
 
+
+        @* Batch HP editing reuses the standard health modal. The trigger is hidden;
+           OpenBatchHpAsync opens it and ApplyBatchHpAsync fans the change out to every
+           selected combatant's health gauge. *@
+        @if (_batchHpGauge != null) {
+            <GaugeDisplay @key="_batchHpGauge.Id" GaugeInstance="_batchHpGauge" ShowTrigger="false" ChangedCallback="ApplyBatchHpAsync" />
+        }
 
         <Modal Title="Apply Status" id="quickStatusDialog">
             <div class="p-3 d-flex flex-column gap-2" style="min-width: 260px">
@@ -399,6 +411,57 @@
 			}
 		}
 		await CloseModalAsync("bulkEditNpcDialog");
+	}
+
+	// -- Batch HP editing (reuses the health modal) --
+	private Gauge? _batchHpGauge;
+	private int _batchHpPrevValue;
+	private bool _pendingBatchHpOpen;
+
+	private IEnumerable<Gauge> SelectedHealthGauges => SelectedNpcs
+		.SelectMany(n => n.Gauges ?? Enumerable.Empty<Gauge>())
+		.Where(g => g.IsHealth);
+
+	private async Task OpenBatchHpAsync()
+	{
+		var healthGauges = SelectedHealthGauges.ToList();
+		if (!healthGauges.Any()) return;
+
+		var max = healthGauges.Max(g => g.Max);
+		if (max <= 0) max = 100;
+
+		// A fresh id each time forces a new GaugeDisplay instance (via @key) so its
+		// internal history starts clean and no spurious change fires on open.
+		_batchHpGauge = new Gauge
+		{
+			Id = Guid.NewGuid(),
+			Name = "Health",
+			Max = max,
+			Value = max,
+			GaugeType = GaugeType.IconBar,
+			Colour = "red",
+			Icon = "❤️",
+		};
+		_batchHpPrevValue = _batchHpGauge.Value;
+		_pendingBatchHpOpen = true;
+		StateHasChanged();
+	}
+
+	// Fired by the shared health modal. Apply the delta the DM entered to every
+	// selected combatant's health gauge, reusing the same persistence + undo path.
+	private async Task ApplyBatchHpAsync(Gauge batchGauge)
+	{
+		var delta = batchGauge.Value - _batchHpPrevValue;
+		_batchHpPrevValue = batchGauge.Value;
+		if (delta == 0) return;
+
+		foreach (var npc in SelectedNpcs.ToList())
+		{
+			var hp = npc.Gauges?.FirstOrDefault(g => g.IsHealth);
+			if (hp == null) continue;
+			hp.Value += delta;
+			await CharService.UpdateGaugeAsync(hp);
+		}
 	}
 
 	private async Task OnDeleteConfirmKeyDown(KeyboardEventArgs e, PlayerCharacter character, bool isNpc)
@@ -637,6 +700,15 @@
         else
         {
             Navigation.NavigateTo("/forbidden");
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_pendingBatchHpOpen && _batchHpGauge != null)
+        {
+            _pendingBatchHpOpen = false;
+            await JS.InvokeVoidAsync("eval", $"document.getElementById('{_batchHpGauge.Id}').showModal()");
         }
     }
 

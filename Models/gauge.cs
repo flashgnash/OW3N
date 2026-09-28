@@ -48,4 +48,11 @@ public class Gauge
     
     
     public string? Colour {get; set;}
+
+    // True for the current-HP gauge. Used to scope DM-screen HP editing to health only.
+    [NotMapped]
+    public bool IsHealth =>
+        !string.IsNullOrEmpty(Name)
+        && (Name.Equals("health", StringComparison.OrdinalIgnoreCase)
+            || Name.Equals("hp", StringComparison.OrdinalIgnoreCase));
 }

@@ -42,7 +42,13 @@
             <div class="d-flex align-items-center gap-2 w-100">
                 <div class="d-flex flex-column gap-1" style="flex: 1 1 0%; min-width: 0">
                     @foreach(Gauge gauge in Character.Gauges) {
-                        <Bar GaugeInstance="@gauge" />
+                        @* HP bar is clickable and opens the shared health modal; other gauges stay read-only. *@
+                        @if (gauge.IsHealth) {
+                            <GaugeDisplay GaugeInstance="@gauge" Compact="true" ChangedCallback="HandleGaugeChanged" />
+                        }
+                        else {
+                            <Bar GaugeInstance="@gauge" />
+                        }
                     }
                 </div>
                 @{
@@ -167,6 +173,13 @@
 
     private Guid? _buffPopoverId;
     private bool _showAddStatus;
+
+    // Persist an HP/gauge edit made through the reused health modal. UpdateGaugeAsync
+    // notifies live listeners, so player-facing character sheets stay in sync.
+    private async Task HandleGaugeChanged(Gauge gauge)
+    {
+        await CharService.UpdateGaugeAsync(gauge);
+    }
 
     private void ToggleBuffPopover(Guid id) => _buffPopoverId = _buffPopoverId == id ? null : id;
     private void ToggleAddStatusPopover() => _showAddStatus = !_showAddStatus;

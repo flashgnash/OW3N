@@ -123,18 +123,25 @@
 
 }
 
+@if (ShowTrigger) {
 <a href="javascript:void(0)" style="text-decoration: none; color: inherit" onclick="document.getElementById('@(GaugeInstance.Id)').showModal()" class="w-100 h-100 d-flex">
-  @switch (@GaugeInstance.GaugeType) {
-    case GaugeType.Orb:
-      <Orb GaugeInstance="@DisplayGauge"/>
-      break;
-    case GaugeType.IconBar:
-      <IconBar GaugeInstance="@DisplayGauge"/>
-      break;
-
+  @if (Compact) {
+    <Bar GaugeInstance="@DisplayGauge" />
   }
-  
+  else {
+    @switch (@GaugeInstance.GaugeType) {
+      case GaugeType.Orb:
+        <Orb GaugeInstance="@DisplayGauge"/>
+        break;
+      case GaugeType.IconBar:
+        <IconBar GaugeInstance="@DisplayGauge"/>
+        break;
+
+    }
+  }
+
 </a>
+}
 
 
 
@@ -142,6 +149,16 @@
 
   [Parameter]
   public bool AllowDialog {get; set;} = true;
+
+  // Render the trigger as a compact horizontal bar (e.g. on the DM screen cards)
+  // instead of the full Orb/IconBar display. The edit modal is unchanged.
+  [Parameter]
+  public bool Compact {get; set;}
+
+  // When false, only the edit modal is rendered (no visible trigger). Callers open
+  // the modal themselves via document.getElementById(gauge.Id).showModal().
+  [Parameter]
+  public bool ShowTrigger {get; set;} = true;
 
 
   public List<(int,DateTime)> ChangeHistory {get; set;} = new();
