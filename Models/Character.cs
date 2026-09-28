@@ -42,6 +42,11 @@ public IEnumerable<ValidationResult> Validate(ValidationContext ctx)
 
     public Campaign? Campaign { get; set; }
 
+    // Optional Discord webhook override for this character. Takes precedence
+    // over the campaign webhook, which in turn falls back to the globally
+    // configured webhook.
+    public string? WebhookUrl { get; set; }
+
     public string? RollServerId { get; set; }
 
     public ICollection<RollResult>? Rolls {get; set;}

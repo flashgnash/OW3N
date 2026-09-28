@@ -25,6 +25,14 @@
         </div>
     </div>
 
+    <div class="mb-3">
+        <span>
+            <label class="form-label">Discord Webhook URL</label>
+            <span title="Discord webhook rolls for this campaign get posted to. Leave blank to use the default webhook. Individual characters can override this." style="cursor: default; user-select: none; color:var(--accent)">?</span>
+        </span>
+        <input class="form-control" placeholder="https://discord.com/api/webhooks/…" @bind="Campaign.WebhookUrl"/>
+    </div>
+
     <div class="d-flex flex-wrap gap-3 mt-1">
         <div style="flex: 1 1 300px; min-width: 0">
             <div class="d-flex align-items-center">

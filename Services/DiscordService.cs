@@ -11,11 +11,16 @@ public class DiscordService(IConfiguration config, HttpClient http)
     // Still undecided on how best to get the webhook URI
     // Also, might not bother with this method at all ikn the long run and just have the bot send the
     // message with CachedHttp, but rust is being a pain so I'd like to avoid that for now
-    public async Task SendMessageAsync(string message)
+    // Resolves the webhook to post to: use the supplied override when present,
+    // otherwise fall back to the globally configured webhook.
+    private string? ResolveWebhookUrl(string? webhookUrl) =>
+        string.IsNullOrWhiteSpace(webhookUrl) ? config["DiscordWebhookUrl"] : webhookUrl;
+
+    public async Task SendMessageAsync(string message, string? webhookUrl = null)
     {
         var payload = JsonSerializer.Serialize(new { content = message });
         var content = new StringContent(payload, Encoding.UTF8, "application/json");
-        await http.PostAsync(config["DiscordWebhookUrl"], content);
+        await http.PostAsync(ResolveWebhookUrl(webhookUrl), content);
     }
 
     private string ColorHexFromString(string input)
@@ -25,7 +30,7 @@ public class DiscordService(IConfiguration config, HttpClient http)
         return $"#{hash[0]:X2}{hash[1]:X2}{hash[2]:X2}";
     }
 
-    public async Task SendEmbedAsync(string title, string description, string? colorHex = null)
+    public async Task SendEmbedAsync(string title, string description, string? colorHex = null, string? webhookUrl = null)
     {
         colorHex = colorHex ?? ColorHexFromString(title);
         var embed = new
@@ -42,6 +47,6 @@ public class DiscordService(IConfiguration config, HttpClient http)
         var json = JsonSerializer.Serialize(payload);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-        await http.PostAsync(config["DiscordWebhookUrl"], content);
+        await http.PostAsync(ResolveWebhookUrl(webhookUrl), content);
     }
 }

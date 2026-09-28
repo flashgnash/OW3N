@@ -12,4 +12,8 @@ public class Campaign
 
     public string? DefaultRollDie { get; set; }
     public string? StatModifierFormula { get; set; }
+
+    // Optional Discord webhook override for this campaign. Falls back to the
+    // globally configured webhook when null/empty.
+    public string? WebhookUrl { get; set; }
 }
