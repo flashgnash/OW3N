@@ -32,6 +32,14 @@
       </div>
   </div>
 
+  <div class="m-2">
+    <div>
+      <label class="form-label">Discord Webhook URL</label>
+      <span title="Discord webhook rolls for this character get posted to. Leave blank to fall back to the campaign's webhook, then the default." class="fs-5" style="cursor: default; user-select: none; color:var(--accent)">?</span>
+    </div>
+    <input class="form-control" placeholder="@(Character?.Campaign?.WebhookUrl ?? "https://discord.com/api/webhooks/…")" @bind="Character.WebhookUrl" />
+  </div>
+
   <div class="m-2 text-center text-danger fs-4">
     @if(Character.UserId == null && !Character.IsNpc) {
       <div>

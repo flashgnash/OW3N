@@ -113,7 +113,12 @@
 
           LastResult = response;
           LoadingRoll = false;
-          _ = DiscordService.SendEmbedAsync($"Rolling for {Character.Name}...", response.Message);
+          // Prefer the character's own webhook, then the campaign's, then the
+          // globally configured default (resolved inside DiscordService).
+          var webhookUrl = !string.IsNullOrWhiteSpace(Character.WebhookUrl)
+              ? Character.WebhookUrl
+              : Character.Campaign?.WebhookUrl;
+          _ = DiscordService.SendEmbedAsync($"Rolling for {Character.Name}...", response.Message, webhookUrl: webhookUrl);
         }
         catch (Exception e){
           LoadingRoll = false;
