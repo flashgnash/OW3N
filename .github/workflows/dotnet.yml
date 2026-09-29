@@ -3,9 +3,26 @@ name: build-publish
 on:
   push:
     branches: [ master ]
+  pull_request:
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      # SkipWebAssets skips the npm/sass web-asset build; the tests only exercise managed code.
+      - name: Test
+        run: dotnet test OW3N.Tests/OW3N.Tests.csproj --configuration Release -p:SkipWebAssets=true
+
   build:
+    needs: test
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
