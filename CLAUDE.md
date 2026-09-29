@@ -12,6 +12,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # Build
 dotnet build
 
+# Test (xUnit suite in OW3N.Tests/)
+nix run .#test
+# or directly: dotnet test OW3N.Tests/OW3N.Tests.csproj -p:SkipWebAssets=true
+
 # Run (development, hot reload via nix flake — run in background)
 nix develop --command run
 

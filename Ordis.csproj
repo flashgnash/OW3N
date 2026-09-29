@@ -20,12 +20,23 @@
 
   <ItemGroup></ItemGroup>
 
-  <Target Name="NpmInstall" BeforeTargets="CompileSass">
+  <!-- The test project lives under OW3N.Tests/ inside this project's directory (the repo
+       root), so exclude it from the default SDK globbing to keep it out of the app build. -->
+  <ItemGroup>
+    <Compile Remove="OW3N.Tests/**/*.cs" />
+    <Content Remove="OW3N.Tests/**/*" />
+    <None Remove="OW3N.Tests/**/*" />
+    <EmbeddedResource Remove="OW3N.Tests/**/*" />
+  </ItemGroup>
+
+  <!-- Set -p:SkipWebAssets=true to skip the npm/sass web-asset build (e.g. when the test
+       project references this one, or in CI test runs that only need the managed assemblies). -->
+  <Target Name="NpmInstall" BeforeTargets="CompileSass" Condition="'$(SkipWebAssets)' != 'true'">
     <!-- Install node modules (bootstrap) -->
     <Exec Command="npm install" ContinueOnError="False" />
   </Target>
 
-  <Target Name="CompileSass" BeforeTargets="ComputeStaticWebAssetManifest;BeforeBuild">
+  <Target Name="CompileSass" BeforeTargets="ComputeStaticWebAssetManifest;BeforeBuild" Condition="'$(SkipWebAssets)' != 'true'">
     <Exec Command="sass --load-path=node_modules sass/app.scss wwwroot/app.css" ContinueOnError="False" />
   </Target>
 

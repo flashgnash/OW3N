@@ -230,6 +230,30 @@
           '';
         };
 
+        # Implements `nix run .#test`: builds and runs the xUnit automated test suite.
+        # SkipWebAssets avoids the npm/sass web-asset build (tests only need managed code) and
+        # UseAppHost=false avoids native apphost generation, matching the sandbox-safe build wrapper.
+        testCommand = pkgs.writeShellApplication {
+          name = "ow3n-test";
+          runtimeInputs = with pkgs; [
+            dart-sass
+            dotnetPkg
+            nodejs
+          ];
+          text = ''
+            if [[ ! -f Ordis.csproj ]]; then
+              echo "Run this command from the OW3N repository root." >&2
+              exit 1
+            fi
+
+            export XDG_CACHE_HOME="''${XDG_CACHE_HOME:-''${TMPDIR:-/tmp}/ow3n-build-cache}"
+            mkdir -p "$XDG_CACHE_HOME"
+            export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+            exec dotnet test OW3N.Tests/OW3N.Tests.csproj --nologo \
+              -p:SkipWebAssets=true -p:UseAppHost=false "$@"
+          '';
+        };
+
         # Implements `nix run .#test-serve`: an isolated PostgreSQL + stub + packaged app stack.
         testServeCommand = pkgs.writeShellApplication {
           name = "ow3n-test-serve";
@@ -290,6 +314,9 @@
         apps = {
           # Build OW3N without an apphost and with a writable XDG cache: `nix run .#build`.
           build = flake-utils.lib.mkApp { drv = buildCommand; };
+
+          # Run the automated xUnit test suite: `nix run .#test`.
+          test = flake-utils.lib.mkApp { drv = testCommand; };
 
           # Launch the disposable browser-test stack: `nix run .#test-serve`.
           test-serve = flake-utils.lib.mkApp { drv = testServeCommand; };
